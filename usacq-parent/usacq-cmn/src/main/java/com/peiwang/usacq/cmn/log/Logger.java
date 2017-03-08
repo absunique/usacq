@@ -1,10 +1,10 @@
 /*
  * 
- * Copyright 2015, China UnionPay Co., Ltd. All right reserved.
+ * Copyright 2015, $${COMPANY} Co., Ltd. All right reserved.
  * 
- * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF CHINA UNIONPAY CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF $${COMPANY} CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
  * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
- * PERMISSION OF CHINA UNIONPAY CO., LTD.
+ * PERMISSION OF $${COMPANY} CO., LTD.
  * 
  * $Id: Logger.java,v 1.1 2016/08/30 07:28:20 peiwang Exp $
  * 
@@ -14,7 +14,7 @@
  * 
  * Edit History:
  * 
- * 2015年8月11日 - Create By wangshuzhen
+ * 2015年8月11日 - Create By wangpei
  */
 
 package com.peiwang.usacq.cmn.log;
