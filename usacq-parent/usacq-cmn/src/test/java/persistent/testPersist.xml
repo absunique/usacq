@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	<!-- 配置实现自动扫描和定义BEAN -->
+	<!-- local development环境 -->
+	<context:property-placeholder
+		ignore-resource-not-found="true" location="classpath*:/persistent/db_dev.properties" />
+
+	<context:annotation-config></context:annotation-config>
+	<context:component-scan base-package="com.peiwang.usacq.cmn" />
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource_swt" />
+	</bean>
+	<bean id="transactionManager_mgmdb"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource_mgm" />
+		<qualifier value="mgmTrans"></qualifier>
+	</bean>
+	<!-- JDBC模板:mgm -->
+	<bean id="jdbcTemplate_mgm" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref local="dataSource_mgm" />
+		</property>
+	</bean>
+	<!-- JDBC模板:swt -->
+	<bean id="jdbcTemplate_swt" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref local="dataSource_swt" />
+		</property>
+		<property name="fetchSize" value="10" />
+	</bean>
+
+	<!-- 配置事务管理器驱动名 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- DBCP连接池 -->
+	<bean id="dataSource_mgm" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driver.mgmdb}" />
+		<property name="url" value="${jdbc.url.mgmdb}" />
+		<property name="username" value="${jdbc.username.mgmdb}" />
+		<property name="password" value="${jdbc.password.mgmdb}" />
+		<property name="defaultAutoCommit" value="false" />
+	</bean>
+	<!-- DBCP连接池 -->
+
+	<bean id="dataSource_swt" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="maxActive" value="150" />
+		<property name="driverClassName" value="${jdbc.driver.swtdb}" />
+		<property name="url" value="${jdbc.url.swtdb}" />
+		<property name="username" value="${jdbc.username.swtdb}" />
+		<property name="password" value="${jdbc.password.swtdb}" />
+		<property name="defaultAutoCommit" value="false" />
+	</bean>
+	<bean id="PersistentService_JDBC_mgmDb"
+		class="com.peiwang.usacq.cmn.persistent.jdbc.PersistentServiceImplJDBC">
+		<property name="jdbcTemplate" ref="jdbcTemplate_mgm"></property>
+	</bean>
+	<bean id="PersistentService_JDBC_swtDb"
+		class="com.peiwang.usacq.cmn.persistent.jdbc.PersistentServiceImplJDBC">
+		<property name="jdbcTemplate" ref="jdbcTemplate_swt"></property>
+	</bean>
+	<aop:aspectj-autoproxy />
+</beans>

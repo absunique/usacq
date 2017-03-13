@@ -28,12 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.LoggerFactory;
 
 /**
- * 日志，在公共组件的基础上包装
- * <p>
- * 对于文件日志记录，带占位符的字符串使用%s;
- * <p>
+ * 基于slf4j封装
  * 
- * @author szwang
+ * @author peiwang
  * @version
  * @since
  * 

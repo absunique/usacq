@@ -21,26 +21,18 @@ package com.peiwang.usacq.cmn;
 
 import java.sql.Timestamp;
 
-/**
- * 公共常量类
- * 
- * @author peiwang
- * @version
- * @since
- * 
- */
 public abstract class Const {
 
 	/** 序列化版本号 */
 	public static final long VERSION_ID = 1L;
 
 	/** 公共模块配置文件 */
-	public static final String COMMON_CONFIG_FILE = "config.properties";
+	public static final String COMMON_CONFIG_FILE = "config/common-config.properties";
 
 	/** 列名分隔符号 */
 	public static final String COLUMN_SEPARATOR = ",";
 
-	/** 列名分隔符号 */
+	/** 表-列连接符 */
 	public static final String COLUMN_POINT = ".";
 
 	/** *通配符 */
@@ -58,10 +50,11 @@ public abstract class Const {
 	/**
 	 * 数据库类型
 	 * 
-	 * @author szwang
+	 * @author gys
 	 * 
 	 */
 	public static abstract class DbType {
+
 		public static final String DB2 = "db2";
 		public static final String MYSQL = "mysql";
 		public static final String ORACLE = "oracle";
@@ -92,6 +85,8 @@ public abstract class Const {
 		public static final String SINGLE_SELECT = "03"; // 多选
 		public static final String DATE = "04"; // 日期
 		public static final String AUTO_COMPLETE = "08"; // 自动完成
+		public static final String BITMAP_BIN = "61"; // 二进制位图
+		public static final String BITMAP_HEX = "64"; // 十六进制位图
 	}
 
 	/**
@@ -99,13 +94,35 @@ public abstract class Const {
 	 */
 	public static abstract class DataType {
 
+		public static final String NONE = ""; // 忽略，按 实际类型操作
 		public static final String STRING = "00";
 		public static final String INT = "01";
 		public static final String TIMESTAMP = "02";
 		public static final String FLOAT = "03";
 		public static final String DECIMAL = "04";
 		public static final String BINARY = "05";
-		public static final String NONE = "06"; // 忽略，不进行操作
+
+		/**
+		 * 判断是否未定义数据类型
+		 * 
+		 * @since
+		 * @param dataType
+		 * @return
+		 */
+		public static boolean isNull(String dataType) {
+			return dataType == null || DataType.NONE.equals(dataType);
+		}
+
+		/**
+		 * nullSafeGet
+		 * 
+		 * @since
+		 * @param dataType
+		 * @return
+		 */
+		public static String nullSafeGet(String dataType) {
+			return dataType == null ? NONE : dataType;
+		}
 	}
 
 	/**
@@ -115,9 +132,10 @@ public abstract class Const {
 
 		public final static String ZERO = "0";
 		public final static String NULL = "";
-		public final static String CURRENT_TIMESTAMP = null;
+		public final static String CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP";
 		public final static Timestamp CURRENT_TS = null;
 		public final static Timestamp EMPTY_TS = null;
+		public final static int INT_ZERO = 0;
 	}
 
 	/**
@@ -152,6 +170,7 @@ public abstract class Const {
 		public static final String TIME = "2"; // 日期,时间
 		public static final String EXPRESSION = "3"; // 表达式，目前为正则表达式
 		public static final String VRF_CLASS = "4"; // 指定校验类
+		public static final String AT = "5"; // 金额
 	}
 
 	/**
@@ -180,6 +199,18 @@ public abstract class Const {
 		public static final String POINT = ".";
 		public static final String COMMA = ",";
 		public static final String ZERO = "0";
+
+	}
+
+	/** 文件后缀 */
+	public static abstract class FileSuffix {
+
+		public static final String TXT = ".txt";
+		public static final String EXCEL_03 = ".xls";
+		public static final String EXCEL_07 = ".xlsx";
+		public static final String ZIP = ".zip";
+		public static final String TMP = ".tmp";
+
 	}
 
 	/** 缓存类型 */
