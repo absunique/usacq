@@ -28,6 +28,7 @@
 		<version.aspectj>1.6.11</version.aspectj>
 		<version.dbcp>1.4</version.dbcp>
 		<version.mysql.jdbc>5.1.18</version.mysql.jdbc>
+		<version.httpclient>4.5.1</version.httpclient>
 	</properties>
 	<dependencies>
 		<!-- log -->
@@ -37,6 +38,12 @@
 			<version>${version.slf4j}</version>
 		</dependency>
 
+		<!-- http -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${version.httpclient}</version>
+		</dependency>
 		<!-- jdbc database connection pool -->
 		<dependency>
 			<groupId>commons-dbcp</groupId>

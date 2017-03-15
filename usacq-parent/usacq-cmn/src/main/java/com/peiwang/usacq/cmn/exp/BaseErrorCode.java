@@ -33,6 +33,9 @@ public abstract class BaseErrorCode {
 
     public static final String SUCCEED                                   = "1";
 
+	public static final String COMM_HTTP_GET_FAILED = "0108"; // CMN-从URL {0} GET数据失败
+	public static final String COMM_HTTP_POST_FAILED = "0109"; // CMN-向URL{0} POST数据失败
+	public static final String COMM_HTTP_STATUS_ERROR = "0110"; // CMN-HTTP返回应答码{0}
     /** 0001 ~ 0005 未归类异常 */
     public static final String COMN_UNKOWN_EXCEPTION                     = "1001"; // CMN - 未知异常
     public static final String COMN_NULL_EXCEPTION                       = "1002"; // CMN - 空指针异常
