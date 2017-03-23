@@ -100,19 +100,6 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>${version.aspectj}</version>
 		</dependency>
-		<!-- dubbo -->
-		<!-- https://mvnrepository.com/artifact/com.alibaba/dubbo -->
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>dubbo</artifactId>
-			<version>${version.dubbo}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>io.netty</groupId>

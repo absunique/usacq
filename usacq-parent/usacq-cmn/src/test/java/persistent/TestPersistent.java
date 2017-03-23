@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.peiwang.usacq.cmn.persistent.PersistentService;
+import com.zpayment.cmn.persistent.PersistentService;
 
 public class TestPersistent {
 	public static void main(String[] args) {

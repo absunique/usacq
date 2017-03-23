@@ -1,7 +1,7 @@
 package persistent;
 
-import com.peiwang.usacq.cmn.persistent.jdbc.annonation.JdbcColumn;
-import com.peiwang.usacq.cmn.persistent.jdbc.annonation.JdbcView;
+import com.zpayment.cmn.persistent.jdbc.annonation.JdbcColumn;
+import com.zpayment.cmn.persistent.jdbc.annonation.JdbcView;
 
 @JdbcView(name = "user")
 public class DBUser {

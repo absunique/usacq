@@ -65,11 +65,11 @@
 		<property name="defaultAutoCommit" value="false" />
 	</bean>
 	<bean id="PersistentService_JDBC_mgmDb"
-		class="com.peiwang.usacq.cmn.persistent.jdbc.PersistentServiceImplJDBC">
+		class="com.zpayment.cmn.persistent.jdbc.PersistentServiceImplJDBC">
 		<property name="jdbcTemplate" ref="jdbcTemplate_mgm"></property>
 	</bean>
 	<bean id="PersistentService_JDBC_swtDb"
-		class="com.peiwang.usacq.cmn.persistent.jdbc.PersistentServiceImplJDBC">
+		class="com.zpayment.cmn.persistent.jdbc.PersistentServiceImplJDBC">
 		<property name="jdbcTemplate" ref="jdbcTemplate_swt"></property>
 	</bean>
 	<aop:aspectj-autoproxy />
