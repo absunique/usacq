@@ -173,6 +173,43 @@ public abstract class PropertyUtils {
 	}
 
 	/**
+	 * 获取指定文件的属性值，boolean返回
+	 * 
+	 * @since
+	 * @param propFile
+	 *            形如com/cup/**.properties
+	 * @param key
+	 * @return
+	 */
+	public static boolean getBoolean(String propFile, String key) {
+		try {
+			String v = getString(propFile, key);
+			return Boolean.parseBoolean(v);
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * 获取指定文件的属性值，boolean返回
+	 * 
+	 * @since
+	 * @param propFile
+	 *            形如com/cup/**.properties
+	 * @param key
+	 * @return
+	 */
+	public static boolean getBoolean(String propFile, String key,
+			boolean defaultVal) {
+		try {
+			String v = getString(propFile, key);
+			return Boolean.parseBoolean(v);
+		} catch (Exception e) {
+			return defaultVal;
+		}
+	}
+
+	/**
 	 * 按propFile获取资源
 	 * 
 	 * @since

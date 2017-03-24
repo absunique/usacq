@@ -56,6 +56,7 @@ public interface PersistentService {
 	public int excute(PreparedSQL pSql);
 
 	/*---------------基于对象查询-----------*/
+	public <T> List<T> query(PreparedSQL pSql, Class<T> clazz);
 
 	public <T> T queryOne(T entity, String tblName);// 查单个
 

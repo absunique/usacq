@@ -250,4 +250,22 @@ public final class Config {
 			return evtPkg;
 		}
 	}
+
+	/**
+	 * 是否从数据库装载
+	 */
+	public static boolean isNviewLoadFromDb() {
+		return PropertyUtils.getBoolean(Const.COMMON_CONFIG_FILE,
+				"nview.load.db", true);
+
+	}
+
+	/**
+	 * 是否从XML装载
+	 */
+	public static boolean isNviewLoadFromXml() {
+		return PropertyUtils.getBoolean(Const.COMMON_CONFIG_FILE,
+				"nview.load.xml");
+
+	}
 }

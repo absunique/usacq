@@ -31,6 +31,7 @@ public abstract class BaseErrorCode {
 	public static final String COMN_UNKOWN_EXCEPTION = "1001"; // CMN - 未知异常
 	public static final String COMN_NULL_EXCEPTION = "1002"; // CMN - 空指针异常
 	public static final String COMN_EXCEPTION_TYPE_ERROR = "1003"; // CMN -  异常类型错误
+	public static final String COMN_REFLACT_FAIL = "1004"; // CMN - 反射错误
 
 	/** 0006 ~ 0010 JNDI异常 */
 	public static final String COMN_JNDI_SERVICE_NOT_EXIST = "1006"; // CMN - JNDI服务不存在
@@ -71,6 +72,7 @@ public abstract class BaseErrorCode {
 	public static final String COMN_CACHE_DESTROY_FAILED = "1046"; // CMN - 缓存销毁失败
 	public static final String COMN_CACHE_KEY_INVALID = "1047"; // CMN - 缓存主键错误
 	public static final String COMN_CACHE_NOT_EXIST = "1048"; // CMN - 缓存不存在
+	public static final String COMN_CACHE_KEY_DUPLICATE = "1049"; // CACHE - 缓存重复
 
 	/** 0050 ~ 0059 JMS消息异常 */
 	public static final String COMN_JMS_MESSAGE_SEND_FAILED = "1050"; // CMN - JMS消息发送异常
@@ -97,6 +99,5 @@ public abstract class BaseErrorCode {
 	public static final String COMN_OPERATION_LOCKED = "1091"; // CMN - 操作正在进行，不能再次发起
 
 	public static final String COMN_INVALID_PROPERTY = "1092"; // CMN - 错误的配置项
-
 
 }

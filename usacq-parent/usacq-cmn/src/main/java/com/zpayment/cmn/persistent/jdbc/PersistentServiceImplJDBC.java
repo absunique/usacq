@@ -205,12 +205,6 @@ public class PersistentServiceImplJDBC implements PersistentService {
 		return query(pSql, new RowMapperResultSetExtractor<T>(res));
 	}
 
-	public <T> List<T> query(PreparedSQL psql, Class<T> elementType) {
-		ResultSetExtractor<List<T>> rse = new AnnotationResultSetExtractor<T>(
-				elementType);
-		return query(psql, rse);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -224,6 +218,12 @@ public class PersistentServiceImplJDBC implements PersistentService {
 	}
 
 	/*-------基于对象查询-------*/
+	@Override
+	public <T> List<T> query(PreparedSQL psql, Class<T> elementType) {
+		ResultSetExtractor<List<T>> rse = new AnnotationResultSetExtractor<T>(
+				elementType);
+		return query(psql, rse);
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
