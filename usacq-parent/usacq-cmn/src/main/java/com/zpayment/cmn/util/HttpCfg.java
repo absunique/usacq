@@ -1,20 +1,12 @@
 /*
  * 
- * Copyright 2016, China UnionPay Co., Ltd. All right reserved.
+ * Copyright 2017, ZPayment Co., Ltd. All right reserved.
  * 
- * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF CHINA UNIONPAY CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
  * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
- * PERMISSION OF CHINA UNIONPAY CO., LTD.
+ * PERMISSION OF ZPayment CO., LTD.
  * 
- * $Id: HttpCfg.java,v 1.1 2017/01/22 01:51:23 peiwang Exp $
- * 
- * Function:
- * 
- * //TODO 请添加功能描述
- * 
- * Edit History:
- * 
- * 2016-12-14 - Create By peiwang
+ * 2017年3月24日 - Create By peiwang
  */
 package com.zpayment.cmn.util;
 

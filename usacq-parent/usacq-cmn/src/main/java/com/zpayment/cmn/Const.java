@@ -1,20 +1,12 @@
 /*
  * 
- * Copyright 2012, $${COMPANY} Co., Ltd. All right reserved.
+ * Copyright 2017, ZPayment Co., Ltd. All right reserved.
  * 
- * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF $${COMPANY} CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
  * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
- * PERMISSION OF $${COMPANY} CO., LTD.
+ * PERMISSION OF ZPayment CO., LTD.
  * 
- * $Id: Const.java,v 1.1 2016/08/30 07:28:19 peiwang Exp $
- * 
- * Function:
- * 
- * //TODO 请添加功能描述
- * 
- * Edit History:
- * 
- * 2012-11-22 - Create By peiwang
+ * 2017年3月24日 - Create By peiwang
  */
 
 package com.zpayment.cmn;

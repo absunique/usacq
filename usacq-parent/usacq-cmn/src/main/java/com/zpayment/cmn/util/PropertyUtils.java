@@ -1,23 +1,12 @@
 /*
  * 
- *  Copyright 2013, $${COMPANY} Co., Ltd.  All right reserved.
- *
- *  THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF $${COMPANY} CO.,
- *  LTD.  THE CONTENTS OF THIS FILE MAY NOT BE DISCLOSED TO THIRD
- *  PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART,
- *  WITHOUT THE PRIOR WRITTEN PERMISSION OF $${COMPANY} CO., LTD.
- *  
- *   $Id: PropertyUtils.java,v 1.1 2016/08/30 07:28:20 peiwang Exp $
- *
- *  Function:
- *
- *    //TODO 请添加功能描述
- *
- *  Edit History:
- *
- *     2013-12-31 - Create By szwang
- *    
- *    
+ * Copyright 2017, ZPayment Co., Ltd. All right reserved.
+ * 
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
+ * PERMISSION OF ZPayment CO., LTD.
+ * 
+ * 2017年3月24日 - Create By peiwang
  */
 
 package com.zpayment.cmn.util;
@@ -34,7 +23,7 @@ import com.zpayment.cmn.exp.BaseException;
 import com.zpayment.cmn.log.Logger;
 
 /**
- * 配置文件.properties读取，封装公共组件室的 @link PropertyUtil 实现，提供基础类型转换
+ * 配置文件.properties读取，
  * 
  * @author peiwang
  * @version

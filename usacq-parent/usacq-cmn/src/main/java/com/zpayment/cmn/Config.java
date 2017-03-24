@@ -1,20 +1,12 @@
 /*
  * 
- * Copyright 2013, $${COMPANY} Co., Ltd. All right reserved.
+ * Copyright 2017, ZPayment Co., Ltd. All right reserved.
  * 
- * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF $${COMPANY} CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
  * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
- * PERMISSION OF $${COMPANY} CO., LTD.
+ * PERMISSION OF ZPayment CO., LTD.
  * 
- * $Id: Config.java,v 1.1 2016/08/30 07:28:19 peiwang Exp $
- * 
- * Function:
- * 
- * //TODO 请添加功能描述
- * 
- * Edit History:
- * 
- * 2013-1-14 - Create By peiwang
+ * 2017年3月24日 - Create By peiwang
  */
 
 package com.zpayment.cmn;
@@ -25,31 +17,12 @@ import com.zpayment.cmn.util.PropertyUtils;
 /**
  * 公共功能所需配置
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 
  */
 public final class Config {
-	/**
-	 * 判断是否upjas2.x
-	 * 
-	 * @return
-	 */
-	public static final boolean isUpjas2() {
-		String upjasVersion = getUpjasVersion();
-		return upjasVersion != null && upjasVersion.trim().startsWith("2");
-	}
-
-	/**
-	 * 获取upjas版本号
-	 * 
-	 * @return
-	 */
-	public static final String getUpjasVersion() {
-		return PropertyUtils.getString(Const.COMMON_CONFIG_FILE,
-				"upjas.version");
-	}
 
 	/**
 	 * 获取EAR名

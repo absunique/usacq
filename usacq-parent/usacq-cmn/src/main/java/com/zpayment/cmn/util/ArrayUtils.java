@@ -1,22 +1,12 @@
 /*
- * 
- * Copyright 2014, China UnionPay Co., Ltd. All right reserved.
- * 
- * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF CHINA UNIONPAY CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
- * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
- * PERMISSION OF CHINA UNIONPAY CO., LTD.
- * 
- * $Id: ArrayUtils.java,v 1.1 2016/08/04 23:15:22 peiwang Exp $
- * 
- * Function:
- * 
- * 数组操作工具
- * 
- * Edit History:
- * 
- * 2014-1-26 - Create By CUPPC
+ *  Copyright 2017, ZPayment Co., Ltd.  All right reserved.
+ *
+ *  THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO.,
+ *  LTD.  THE CONTENTS OF THIS FILE MAY NOT BE DISCLOSED TO THIRD
+ *  PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART,
+ *  WITHOUT THE PRIOR WRITTEN PERMISSION OF ZPayment CO., LTD.
+ *     2017-3-12 - Create By szwang
  */
-
 package com.zpayment.cmn.util;
 
 import java.util.ArrayList;
@@ -27,7 +17,7 @@ import com.zpayment.cmn.log.Logger;
 /**
  * 数组操作工具
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 
