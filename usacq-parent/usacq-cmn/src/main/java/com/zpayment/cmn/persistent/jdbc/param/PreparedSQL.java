@@ -1,32 +1,20 @@
 /*
  * 
- * Copyright 2016, China UnionPay Co., Ltd. All right reserved.
+ * Copyright 2017, ZPayment Co., Ltd. All right reserved.
  * 
- * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF CHINA UNIONPAY CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
  * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
- * PERMISSION OF CHINA UNIONPAY CO., LTD.
- * 
- * $Id: PreparedSQL.java,v 1.1 2016/09/28 04:25:50 peiwang Exp $
- * 
- * Function:
- * 
- * //TODO 请添加功能描述
- * 
- * Edit History:
- * 
- * 2016年8月15日 - Create By wangshuzhen
+ * PERMISSION OF ZPayment CO., LTD.
+ * 2016-11-22 - Create By peiwang
  */
 
 package com.zpayment.cmn.persistent.jdbc.param;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,23 +26,20 @@ import com.zpayment.cmn.log.Logger;
 import com.zpayment.cmn.util.StringUtils;
 
 /**
- * PreparedStatement方式的查询语句，包括预定义sql与对应的参数
- * <p>
- * 特别地，时间戳、二进制等类型直接在sql中写入，不需要使用预定义方式
- * <p>
+ * hold sql以及参数列表
  * 
- * @author wangshuzhen
- * @version
- * @since
- * 
+ * @author peiwang
+ * @since 2017年3月23日
  */
-public class PreparedSQL implements Iterable<SqlParam> {
+public class PreparedSQL {
 
 	private static final Logger log = Logger.getLogger(PreparedSQL.class);
 
 	private List<SqlParam> params = new LinkedList<SqlParam>();
 
 	private String sql;
+
+	private String countSql;
 
 	public PreparedSQL() {
 
@@ -64,10 +49,10 @@ public class PreparedSQL implements Iterable<SqlParam> {
 		this.sql = sql;
 	}
 
-	@Override
-	public Iterator<SqlParam> iterator() {
-		return params.iterator();
-	}
+	// @Override
+	// public Iterator<SqlParam> iterator() {
+	// return params.iterator();
+	// }
 
 	/**
 	 * 设置查询值
@@ -78,7 +63,7 @@ public class PreparedSQL implements Iterable<SqlParam> {
 	 */
 	public void setValues(PreparedStatement ps) throws SQLException {
 		int i = 1;
-		for (SqlParam p : this) {
+		for (SqlParam p : this.getParams()) {
 			if (p.isPreparedParam()) {
 				p.setPreparedParamValue(i++, ps);
 			}
@@ -202,6 +187,13 @@ public class PreparedSQL implements Iterable<SqlParam> {
 		return p;
 	}
 
+	public String getCountSql() {
+		if (StringUtils.isEmpty(countSql)) {
+			countSql = String.format("select count(*) from (%s) as __newName", sql);
+		}
+		return countSql;
+	}
+
 	/**
 	 * 添加BinaryParam, VARCHAR(CHAR) FOR BIT DATA
 	 * 
@@ -231,24 +223,24 @@ public class PreparedSQL implements Iterable<SqlParam> {
 		this.sql = sql;
 	}
 
-//	public SqlParam addField(Object obj) {
-//		if (obj.getClass().isArray()) {
-//			// TODO 参数列表暂时不支持数组
-//			throw new BaseException(BaseErrorCode.FAIL);
-//		} else if (obj instanceof Collection) {
-//			int cnt = ((Collection) obj).size();
-//			for (int j = 0; j < cnt - 1; j++) {
-//				sql.append("?,");
-//			}
-//			sql.append("?) ");
-//		} else if (obj instanceof String) {
-//			return addString((String) obj);
-//		} else if (obj instanceof Integer) {
-//			return addInt((Integer) obj);
-//		} else if (obj instanceof BigInteger) {
-//			return addLong(((BigInteger) obj).intValue());
-//		}
-//	}
+	// public SqlParam addField(Object obj) {
+	// if (obj.getClass().isArray()) {
+	// // TODO 参数列表暂时不支持数组
+	// throw new BaseException(BaseErrorCode.FAIL);
+	// } else if (obj instanceof Collection) {
+	// int cnt = ((Collection) obj).size();
+	// for (int j = 0; j < cnt - 1; j++) {
+	// sql.append("?,");
+	// }
+	// sql.append("?) ");
+	// } else if (obj instanceof String) {
+	// return addString((String) obj);
+	// } else if (obj instanceof Integer) {
+	// return addInt((Integer) obj);
+	// } else if (obj instanceof BigInteger) {
+	// return addLong(((BigInteger) obj).intValue());
+	// }
+	// }
 
 	/**
 	 * 添加实体对象指定字段
@@ -597,7 +589,7 @@ public class PreparedSQL implements Iterable<SqlParam> {
 	@Override
 	public String toString() {
 		List<String> ps = new LinkedList<String>();
-		for (SqlParam p : this) {
+		for (SqlParam p : this.getParams()) {
 			if (p.isPreparedParam()) {
 				ps.add(p.toString());
 			}

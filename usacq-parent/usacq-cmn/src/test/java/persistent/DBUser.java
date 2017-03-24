@@ -7,7 +7,8 @@ import com.zpayment.cmn.persistent.jdbc.annonation.JdbcView;
 public class DBUser {
 	@Override
 	public String toString() {
-		return "DBUser [id=" + id + ", name=" + name + ", dept=" + dept + "]";
+		return "DBUser [id=" + id + ", name=" + name + ", dept=" + dept
+				+ ", account=" + account + ", password=" + password + "]";
 	}
 
 	@JdbcColumn(name = "id", key = true)
@@ -16,6 +17,26 @@ public class DBUser {
 	private String name;
 	@JdbcColumn(name = "dept")
 	private String dept;
+	@JdbcColumn(name = "account")
+	private String account;
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@JdbcColumn(name = "password")
+	private String password;
 
 	public int getId() {
 		return id;

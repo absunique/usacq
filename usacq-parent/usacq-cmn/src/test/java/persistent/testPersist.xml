@@ -17,10 +17,11 @@
 		ignore-resource-not-found="true" location="classpath*:/persistent/db_dev.properties" />
 
 	<context:annotation-config></context:annotation-config>
-	<context:component-scan base-package="com.peiwang.usacq.cmn" />
+	<context:component-scan base-package="com.peiwang.usacq.cmn,persistent" />
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource_swt" />
+		<qualifier value="swtTrans"></qualifier>
 	</bean>
 	<bean id="transactionManager_mgmdb"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

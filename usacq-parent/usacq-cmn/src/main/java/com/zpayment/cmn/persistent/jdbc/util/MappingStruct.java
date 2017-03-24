@@ -1,20 +1,11 @@
 /*
  * 
- * Copyright 2014, China UnionPay Co., Ltd. All right reserved.
+ * Copyright 2017, ZPayment Co., Ltd. All right reserved.
  * 
- * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF CHINA UNIONPAY CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
  * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
- * PERMISSION OF CHINA UNIONPAY CO., LTD.
- * 
- * $Id: MappingStruct.java,v 1.1 2016/09/28 04:25:50 peiwang Exp $
- * 
- * Function:
- * 
- * //TODO 请添加功能描述
- * 
- * Edit History:
- * 
- * 2014-1-3 - Create By szwang
+ * PERMISSION OF ZPayment CO., LTD.
+ * 2016-11-22 - Create By peiwang
  */
 
 package com.zpayment.cmn.persistent.jdbc.util;
@@ -46,12 +37,10 @@ import com.zpayment.cmn.util.ClassUtils;
 import com.zpayment.cmn.util.StringUtils;
 
 /**
- * Annotation映射结构体
+ * 模拟orm，对象映射
  * 
- * @author gys
- * @version
- * @since
- * 
+ * @author peiwang
+ * @since 2017年3月23日
  */
 public final class MappingStruct implements Serializable {
 
@@ -121,6 +110,14 @@ public final class MappingStruct implements Serializable {
 		return sb.toString();
 	}
 
+	/**
+	 * 
+	 * @param table
+	 * @param columnNames
+	 * @param values
+	 * @return
+	 * @deprecated
+	 */
 	public String buildCountQueryByColumnsSQL(String table,
 			String[] columnNames, Object[] values) {
 		if (columnNames == null || values == null
@@ -148,6 +145,7 @@ public final class MappingStruct implements Serializable {
 	 * @param table
 	 * @return
 	 * @throws BaseException
+	 * @deprecated
 	 */
 	public String buildQuerySQL(Object entity, String table)
 			throws BaseException {
@@ -168,6 +166,7 @@ public final class MappingStruct implements Serializable {
 	 * @since
 	 * @param table
 	 * @return
+	 * @deprecated
 	 */
 	public String buildQueryAllSQL(String table) {
 		StringBuilder sb = new StringBuilder("select ");
@@ -205,6 +204,7 @@ public final class MappingStruct implements Serializable {
 	 * @param columnNames
 	 * @param values
 	 * @return
+	 * @deprecated
 	 * @throws BaseException
 	 */
 	public String buildQueryByColumnsSQL(String table, String[] columnNames,
