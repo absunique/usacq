@@ -1,4 +1,14 @@
-package com.zpayment.cmn.persistent.jdbc.batch;
+/*
+ * 
+ * Copyright 2017, ZPayment Co., Ltd. All right reserved.
+ * 
+ * THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF ZPayment CO., LTD. THE CONTENTS OF THIS FILE MAY NOT BE
+ * DISCLOSED TO THIRD PARTIES, COPIED OR DUPLICATED IN ANY FORM, IN WHOLE OR IN PART, WITHOUT THE PRIOR WRITTEN
+ * PERMISSION OF ZPayment CO., LTD.
+ * 
+ * 2017年3月23日 - Create By peiwang
+ */
+package com.zpayment.cmn.persistent.jdbc.adaptor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,10 +23,9 @@ import com.zpayment.cmn.persistent.jdbc.util.MappingStruct;
 import com.zpayment.cmn.persistent.jdbc.util.MappingStructFactory;
 
 /**
- * 批量执行之批量查询
  * 
- * @author wangpei
- * 
+ * @author peiwang
+ * @since 2017年3月24日
  * @param <C>
  */
 public class BatchQueryStatementFactory<C> extends

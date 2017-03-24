@@ -7,7 +7,6 @@
  * PERMISSION OF ZPayment CO., LTD.
  * 2016-11-22 - Create By peiwang
  */
-
 package com.zpayment.cmn.persistent.jdbc.param;
 
 import java.sql.PreparedStatement;
@@ -18,10 +17,12 @@ import com.zpayment.cmn.persistent.jdbc.JdbcUtils;
 import com.zpayment.cmn.util.StringUtils;
 
 /**
- * 二进制参数
+ * 二进制参数 VARCHAR(CHAR) FOR BIT DATA
  * 
  * @author peiwang
- * @since 2017年3月23日
+ * @version
+ * @since
+ * 
  */
 public class BinaryParam extends SqlParamAdapter {
 
@@ -84,5 +85,21 @@ public class BinaryParam extends SqlParamAdapter {
 		} else {
 			return "(Hex)" + hex;
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		String s = toString();
+		return s.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+
+		return this.toString().equals(obj.toString());
 	}
 }

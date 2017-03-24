@@ -14,10 +14,10 @@
 	<!-- 配置实现自动扫描和定义BEAN -->
 	<!-- local development环境 -->
 	<context:property-placeholder
-		ignore-resource-not-found="true" location="classpath*:/persistent/db_dev.properties" />
+		ignore-resource-not-found="true" location="classpath*:com/zpayment/cmn/persistent/db_dev.properties" />
 
 	<context:annotation-config></context:annotation-config>
-	<context:component-scan base-package="com.peiwang.usacq.cmn,persistent" />
+	<context:component-scan base-package="com.zpayment.cmn" />
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource_swt" />

@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * 分页查询结果
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 

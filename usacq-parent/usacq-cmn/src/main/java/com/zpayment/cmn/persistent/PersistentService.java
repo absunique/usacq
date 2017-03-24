@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import com.zpayment.cmn.persistent.jdbc.support.AbstractBatchStatementFactory;
+import com.zpayment.cmn.persistent.jdbc.param.PreparedSQL;
 
 /**
  * 持久层基础接口，DAO基于此封装。
@@ -48,17 +48,12 @@ public interface PersistentService {
 	 */
 	public void empty(String tableName);
 
-	/*---------------基于非对象查询-----------*/
-	public <T> List<T> queryAll(RowMapper<T> rowMapper, String tblName);
+	/*---------------基于PreparedSql操作-----------*/
+	public <T> T query(final PreparedSQL pSql, final ResultSetExtractor<T> res);
 
-	public <T> List<T> queryByColumns(RowMapper<T> rowMapper, String tblName,
-			String[] columnNames, Object[] values);
+	public <T> List<T> query(final PreparedSQL pSql, final RowMapper<T> res);
 
-	public <T> List<T> queryUsingResultSet(String sql,
-			ResultSetExtractor<List<T>> rse);
-
-	public <C, R> List<R> batchExcute(
-			AbstractBatchStatementFactory<C, R> absFactory);
+	public int excute(PreparedSQL pSql);
 
 	/*---------------基于对象查询-----------*/
 

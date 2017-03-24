@@ -7,7 +7,6 @@
  * PERMISSION OF ZPayment CO., LTD.
  * 2016-11-22 - Create By peiwang
  */
-
 package com.zpayment.cmn.persistent.jdbc.param;
 
 import java.sql.PreparedStatement;
@@ -16,10 +15,14 @@ import java.sql.SQLException;
 import com.zpayment.cmn.Const.DataType;
 
 
+
 /**
- * 整数参数
+ * 整型查询参数
+ * 
  * @author peiwang
- * @since 2017年3月23日
+ * @version 
+ * @since  
+ * 
  */
 public class IntParam extends SqlParamAdapter {
     
@@ -38,5 +41,27 @@ public class IntParam extends SqlParamAdapter {
     @Override
     public void setPreparedParamValue(int parameterIndex, PreparedStatement ps) throws SQLException {
         ps.setInt(parameterIndex, value);
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + value;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        IntParam other = (IntParam) obj;
+        if (value != other.value)
+            return false;
+        return true;
     }
 }

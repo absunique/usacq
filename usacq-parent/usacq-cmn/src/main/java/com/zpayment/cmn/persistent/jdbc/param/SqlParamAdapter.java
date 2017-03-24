@@ -7,58 +7,60 @@
  * PERMISSION OF ZPayment CO., LTD.
  * 2016-11-22 - Create By peiwang
  */
-
 package com.zpayment.cmn.persistent.jdbc.param;
 
-import com.zpayment.cmn.Const.DataType;
 import com.zpayment.cmn.exp.BaseErrorCode;
 import com.zpayment.cmn.exp.BaseException;
 
 /**
- * 统一适配器
+ * SqlParam适配器，屏蔽部分操作
  * 
  * @author peiwang
- * @since 2017年3月23日
+ * @version
+ * @since
+ * 
  */
 public abstract class SqlParamAdapter implements SqlParam {
 
-	protected String dataType = null;
+    protected String dataType = null;
 
-	public SqlParamAdapter(String dataType) {
-		this.dataType = dataType;
+    public SqlParamAdapter(String dataType) {
+        this.dataType = dataType;
+        
+        if (dataType == null) {
+            throw new BaseException(BaseErrorCode.COMN_DATA_TYPE_MIS_MATCH, new Object[] { "null" });
+        }
+    }
+    
 
-		if (dataType == null) {
-			throw new BaseException(BaseErrorCode.FAIL, new Object[] { "null" });
-		}
-	}
-
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see {@link DataType}
-	 */
-	@Override
-	public String getDataType() {
-		return dataType;
-	}
-
-	/**
-	 * 获取占位符或值
-	 * 
-	 * @since
-	 * @return
-	 */
-	@Override
-	public String getPlaceHolder() {
-		return PLACE_HOLDER;
-	}
-
-	/**
-	 * 缺省是占位符，需要设置预定义值
-	 * 
-	 */
-	@Override
-	public boolean isPreparedParam() {
-		return true;
-	}
+    /**
+     * (non-Javadoc)
+     * 
+     * @see com.cup.ibscmn.dao.param.SqlParam#getDataType()
+     */
+    @Override
+    public String getDataType() {
+        return dataType;
+    } 
+    
+    /**
+     * 获取占位符或值
+     * 
+     * @since 
+     * @return
+     */
+    @Override
+    public String getPlaceHolder() {
+        return PLACE_HOLDER;
+    }
+    
+    /**
+     * 缺省是占位符，需要设置预定义值
+     * 
+     * @see com.cup.ibscmn.dao.param.SqlParam#isPreparedParam()
+     */
+    @Override
+    public boolean isPreparedParam() {
+        return true;
+    }
 }

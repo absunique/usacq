@@ -18,10 +18,12 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 import com.zpayment.cmn.persistent.jdbc.param.PreparedSQL;
 
 /**
+ * ps设值通用适配器，用于查询
  * @author peiwang
  * @since 2017年3月23日
  */
-public class PreparedSqlSetterAdaptor implements PreparedStatementSetter {
+public class PreparedSqlSetterAdaptor extends AbstractSinglePreparedSqlSetter
+		implements PreparedStatementSetter {
 	private PreparedSQL pSql;
 
 	public PreparedSqlSetterAdaptor(PreparedSQL pSql) {
@@ -37,7 +39,7 @@ public class PreparedSqlSetterAdaptor implements PreparedStatementSetter {
 	 */
 	@Override
 	public void setValues(PreparedStatement ps) throws SQLException {
-		pSql.setValues(ps);
+		setValuesByPreparedSql(pSql, ps);
 	}
 
 }

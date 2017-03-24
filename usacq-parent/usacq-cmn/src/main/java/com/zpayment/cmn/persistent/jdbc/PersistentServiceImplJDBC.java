@@ -9,16 +9,12 @@
  */
 package com.zpayment.cmn.persistent.jdbc;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -34,7 +30,6 @@ import com.zpayment.cmn.persistent.jdbc.adaptor.PreparedSqlCallBackAdaptor;
 import com.zpayment.cmn.persistent.jdbc.adaptor.PreparedSqlSetterAdaptor;
 import com.zpayment.cmn.persistent.jdbc.annonation.JdbcView;
 import com.zpayment.cmn.persistent.jdbc.param.PreparedSQL;
-import com.zpayment.cmn.persistent.jdbc.support.AbstractBatchStatementFactory;
 import com.zpayment.cmn.persistent.jdbc.support.AnnotationResultSetExtractor;
 import com.zpayment.cmn.persistent.jdbc.util.MappingStructFactory;
 
@@ -86,23 +81,6 @@ public class PersistentServiceImplJDBC implements PersistentService {
 	}
 
 	/**
-	 * 根据原生SQL查询，并根据rse映射成各类对象、MAP、LIST等
-	 * 
-	 * @see JdbcView @see JdbcColumn
-	 * 
-	 * @since
-	 * @param <R>
-	 *            结果集
-	 * @param sql
-	 * @param elementType
-	 * @deprecated
-	 * @return
-	 */
-	private <R> R nativeQuery(String sql, ResultSetExtractor<R> rse) {
-		return getJdbcTemplate().query(sql, rse);
-	}
-
-	/**
 	 * 执行原生的SQL
 	 * 
 	 * @see JdbcView @see JdbcColumn
@@ -113,35 +91,11 @@ public class PersistentServiceImplJDBC implements PersistentService {
 	 * @param elementType
 	 * @return
 	 */
-	private void nativeExcute(String sql) {
+	private int nativeExcute(PreparedSQL pSql) {
 		// jt.ex
 		try {
-			getJdbcTemplate().execute(sql);
-		} catch (DuplicateKeyException e) {
-			throw new BaseException(BaseErrorCode.COMN_DB_RECORD_EXISTED,
-					new Object[] { sql }, e);
-		} catch (Exception e) {
-			throw new BaseException(BaseErrorCode.COMN_DB_SQL_EXCEPTION,
-					new Object[] { sql }, e);
-		}
-	}
-
-	/**
-	 * 执行原生的SQL
-	 * 
-	 * @see JdbcView @see JdbcColumn
-	 * 
-	 * @since
-	 * @param <T>
-	 * @param sql
-	 * @param elementType
-	 * @return
-	 */
-	private void nativeExcute(PreparedSQL pSql) {
-		// jt.ex
-		try {
-			getJdbcTemplate().execute(pSql.getSql(),
-					new PreparedSqlCallBackAdaptor<Integer>(pSql));
+			return getJdbcTemplate().execute(pSql.getSql(),
+					new PreparedSqlCallBackAdaptor(pSql));
 		} catch (DuplicateKeyException e) {
 			throw new BaseException(BaseErrorCode.COMN_DB_RECORD_EXISTED,
 					new Object[] { pSql }, e);
@@ -199,41 +153,6 @@ public class PersistentServiceImplJDBC implements PersistentService {
 	 * @param pageSize
 	 * @return
 	 */
-	private String nativePageQuerySql(String sql, int pageNum, int pageSize) {
-		String querySql = sql;
-
-		// if (dbType.equalsIgnoreCase(DbType.DB2)) {
-		// int start = (pageNum - 1) * pageSize + 1;
-		// int end = start + pageSize - 1;
-		//
-		// querySql =
-		// "select * from (select rownumber() over() as row_num,s.* from (" +
-		// sql
-		// + ") as s) as t  where row_num between " + start + " and " + end;
-		//
-		// } else if (dbType.equalsIgnoreCase(DbType.MYSQL)) {
-		int start = (pageNum - 1) * pageSize;
-		// int end = start + pageSize - 1;
-		int end = pageSize;
-
-		querySql = "select * from (" + sql + ") as t limit " + start + ","
-				+ end + ";";
-
-		// } else {
-		// //
-		// log.error("invalid db type: " + dbType);
-		// }
-		return querySql;
-	}
-
-	/**
-	 * 按数据库类型构建查询语句
-	 * 
-	 * @param sql
-	 * @param pageNum
-	 * @param pageSize
-	 * @return
-	 */
 	private PreparedSQL nativePageQuerySql(PreparedSQL pSql, int pageNum,
 			int pageSize) {
 		String querySql = pSql.getSql();
@@ -262,6 +181,7 @@ public class PersistentServiceImplJDBC implements PersistentService {
 		return pSql;
 	}
 
+	/*-------基于PreparedSql-------*/
 	/**
 	 * 最通用的查询，占位符查询
 	 * 
@@ -280,29 +200,27 @@ public class PersistentServiceImplJDBC implements PersistentService {
 				new PreparedSqlSetterAdaptor(pSql), res);
 	}
 
+	@Override
+	public <T> List<T> query(PreparedSQL pSql, RowMapper<T> res) {
+		return query(pSql, new RowMapperResultSetExtractor<T>(res));
+	}
+
 	public <T> List<T> query(PreparedSQL psql, Class<T> elementType) {
 		ResultSetExtractor<List<T>> rse = new AnnotationResultSetExtractor<T>(
 				elementType);
 		return query(psql, rse);
 	}
 
-	/*-------基于语句查询-------*/
-	public <T> List<T> queryAll(RowMapper<T> rowMapper, String tblName) {
-		PreparedSQL pSql = new PreparedSQL();
-		pSql.setSql(String.format("select * from (%s)", tblName));
-		return query(pSql, new RowMapperResultSetExtractor<T>(rowMapper));
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.zpayment.cmn.persistent.PersistentService#excute(com.zpayment.cmn
+	 * .persistent.jdbc.param.PreparedSQL)
+	 */
 	@Override
-	//TODO 待完善
-	public <T> List<T> queryByColumns(RowMapper<T> rowMapper, String tblName,
-			String[] columnNames, Object[] values) throws BaseException {
-		ResultSetExtractor<List<T>> rse = new RowMapperResultSetExtractor<T>(
-				rowMapper);
-		PreparedSQL pSql = new PreparedSQL();
-		StringBuffer sb = new StringBuffer();
-		sb.append("select * from (").append(tblName).append(")");
-		return query(pSql, rse);
+	public int excute(PreparedSQL pSql) {
+		return nativeExcute(pSql);
 	}
 
 	/*-------基于对象查询-------*/
@@ -319,7 +237,7 @@ public class PersistentServiceImplJDBC implements PersistentService {
 	@Override
 	public <T> List<T> queryAll(Class<T> clazz, String tblName) {
 		PreparedSQL ntvSql = MappingStructFactory.create(clazz)
-				.buildQueryAllPSSQL(tblName);
+				.buildQueryAllPSQL(tblName);
 		return query(ntvSql, clazz);
 	}
 
@@ -351,7 +269,7 @@ public class PersistentServiceImplJDBC implements PersistentService {
 	@Override
 	public <T> Page<T> queryAllByPage(Page<T> pg, Class<T> clazz, String tblName) {
 		PreparedSQL pSql = MappingStructFactory.create(clazz)
-				.buildQueryAllPSSQL(tblName);
+				.buildQueryAllPSQL(tblName);
 		initPage(pg, pSql);
 		return this.innerQueryPage(pg, pSql, clazz);
 	}
@@ -389,37 +307,6 @@ public class PersistentServiceImplJDBC implements PersistentService {
 		return query(sql, new SqlRowSetResultSetExtractor());
 	}
 
-	@Override
-	public <T> List<T> queryUsingResultSet(String sql,
-			ResultSetExtractor<List<T>> rse) {
-		return getJdbcTemplate().query(sql, rse);
-	}
-
-	/**
-	 * 初始化页信息
-	 * 
-	 * @since
-	 * @param pageNum
-	 * @param pageSize
-	 * @param countSql
-	 * @return
-	 */
-	private <T> void initPage(Page<T> page, String countSql) {
-		// Page page = new Page().setPageSize(pageSize).setCurrentPage(pageNum);
-		if (!page.isFirst()) {
-			return;
-		}
-		Integer count = queryForInt(countSql);
-		if (count == null || count == 0) {
-			return;
-			// return page.setTotalPage(0).setTotalCount(0);
-		}
-		int totalPage = (count + page.getPageSize() - 1) / page.getPageSize();
-		page.setTotalPage(totalPage).setTotalCount(count);
-		page.setFirst(false);
-		// return page;
-	}
-
 	/**
 	 * 初始化页信息
 	 * 
@@ -443,29 +330,6 @@ public class PersistentServiceImplJDBC implements PersistentService {
 		page.setTotalPage(totalPage).setTotalCount(count);
 		page.setFirst(false);
 		// return page;
-	}
-
-	/**
-	 * 
-	 * @param pg
-	 * @param sql
-	 * @param clazz
-	 * @deprecated
-	 * @return
-	 */
-	private <T> Page<T> innerQueryPage(Page<T> pg, String sql, Class<T> clazz) {
-		ResultSetExtractor<List<T>> rse = new AnnotationResultSetExtractor<T>(
-				clazz);
-		int pageNum = pg.getCurrentPage();
-		int pageSize = pg.getPageSize();
-		if (pg.getTotalCount() == 0 || pageNum > pg.getTotalPage()) {
-			pg.setResults(new LinkedList<T>());
-		} else {
-			String querySql = nativePageQuerySql(sql, pageNum, pageSize);
-			List<T> results = nativeQuery(querySql, rse);
-			pg.setResults(results);
-		}
-		return pg;
 	}
 
 	private <T> Page<T> innerQueryPage(Page<T> pg, PreparedSQL pSql,
@@ -522,10 +386,10 @@ public class PersistentServiceImplJDBC implements PersistentService {
 	public int update(Class<?> clazz, String tblName, String[] updateColumns,
 			Object[] updateValues, String[] conditionColumns,
 			Object[] conditionValues) {
-		String sql = MappingStructFactory.create(clazz)
-				.buildUpdateByColumnsSQL(tblName, updateColumns, updateValues,
+		PreparedSQL pSql = MappingStructFactory.create(clazz)
+				.buildUpdateByColumnsPSQL(tblName, updateColumns, updateValues,
 						conditionColumns, conditionValues);
-		return nativeUpdate(sql);
+		return nativeExcute(pSql);
 	}
 
 	@Override
@@ -535,12 +399,6 @@ public class PersistentServiceImplJDBC implements PersistentService {
 		return this.update(clazz, null, updateColumns, updateValues,
 				conditionColumns, conditionValues);
 
-	}
-
-	@Override
-	public <C, R> List<R> batchExcute(
-			AbstractBatchStatementFactory<C, R> absFactory) {
-		return getJdbcTemplate().execute(absFactory, absFactory);
 	}
 
 	@Override
@@ -558,9 +416,9 @@ public class PersistentServiceImplJDBC implements PersistentService {
 
 	@Override
 	public <T> void merge(T val, String tblName) throws BaseException {
-		String ntvSql = MappingStructFactory.create(val).buildUpdateSQL(val,
-				tblName);
-		nativeExcute(ntvSql);
+		PreparedSQL pSql = MappingStructFactory.create(val).buildUpdatePSQL(
+				val, tblName);
+		nativeExcute(pSql);
 	}
 
 	@Override

@@ -20,7 +20,7 @@ import com.zpayment.cmn.persistent.jdbc.util.MappingStructFactory;
 /**
  * 根据注解将行记录反射成对象
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 

@@ -7,19 +7,16 @@
  * PERMISSION OF ZPayment CO., LTD.
  * 2016-11-22 - Create By peiwang
  */
-
 package com.zpayment.cmn.persistent.jdbc.util;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,16 +28,25 @@ import com.zpayment.cmn.log.Logger;
 import com.zpayment.cmn.persistent.jdbc.JdbcUtils;
 import com.zpayment.cmn.persistent.jdbc.annonation.JdbcColumn;
 import com.zpayment.cmn.persistent.jdbc.annonation.JdbcView;
+import com.zpayment.cmn.persistent.jdbc.builder.ColumnBuilder;
+import com.zpayment.cmn.persistent.jdbc.builder.ConditionBuilder;
+import com.zpayment.cmn.persistent.jdbc.builder.DeleteBuilder;
+import com.zpayment.cmn.persistent.jdbc.builder.InsertBuilder;
+import com.zpayment.cmn.persistent.jdbc.builder.SelectBuilder;
+import com.zpayment.cmn.persistent.jdbc.builder.UpdateBuilder;
+import com.zpayment.cmn.persistent.jdbc.builder.batch.BatchInsertBuilder;
+import com.zpayment.cmn.persistent.jdbc.param.BatchPreparedSQL;
 import com.zpayment.cmn.persistent.jdbc.param.PreparedSQL;
-import com.zpayment.cmn.persistent.jdbc.param.SqlParam;
 import com.zpayment.cmn.util.ClassUtils;
 import com.zpayment.cmn.util.StringUtils;
 
 /**
- * 模拟orm，对象映射
+ * Annotation映射结构体
  * 
  * @author peiwang
- * @since 2017年3月23日
+ * @version
+ * @since
+ * 
  */
 public final class MappingStruct implements Serializable {
 
@@ -88,7 +94,7 @@ public final class MappingStruct implements Serializable {
 		}
 
 		if (result == null) {
-			// throw new BaseException(BaseErrorCode.FAIL);
+			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
 		}
 
 		for (MappingField mf : cfMap.values()) {
@@ -99,237 +105,43 @@ public final class MappingStruct implements Serializable {
 	}
 
 	/**
-	 * 构建count语句
-	 * 
-	 * @param table
-	 * @return
-	 */
-	public String buildCountQueryAllSQL(String table) {
-		StringBuilder sb = new StringBuilder("select count(*)");
-		sb.append(" from ").append(getTableName(table));
-		return sb.toString();
-	}
-
-	/**
-	 * 
-	 * @param table
-	 * @param columnNames
-	 * @param values
-	 * @return
-	 * @deprecated
-	 */
-	public String buildCountQueryByColumnsSQL(String table,
-			String[] columnNames, Object[] values) {
-		if (columnNames == null || values == null
-				|| columnNames.length != values.length) {
-			log.error("column/value is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.FAIL);
-		}
-
-		StringBuilder sb = new StringBuilder("select count(*) ");
-		sb.append(" from ").append(getTableName(table)).append(" where ");
-		appendConditonFields(sb, table, columnNames, values);
-
-		String sql = sb.toString();
-		log.debug("buildCountQueryByColumnsSQL, class: "
-				+ elementType.getSimpleName() + ", sql: " + sql);
-		return sb.toString();
-	}
-
-	/**
-	 * 构建按主键查询的语句
-	 * 
-	 * @since
-	 * @param entity
-	 * @param table
-	 * @return
-	 * @throws BaseException
-	 * @deprecated
-	 */
-	public String buildQuerySQL(Object entity, String table)
-			throws BaseException {
-		StringBuilder sb = new StringBuilder("select ");
-		appendSelectFields(sb);
-		sb.append(" from ").append(getTableName(table)).append(" where ");
-		appendConditonFields(sb, entity);
-
-		String sql = sb.toString();
-		log.debug("buildQuerySql, class: " + entity.getClass().getSimpleName()
-				+ ", sql: " + sql);
-		return sql;
-	}
-
-	/**
-	 * 构建查询所有的语句
-	 * 
-	 * @since
-	 * @param table
-	 * @return
-	 * @deprecated
-	 */
-	public String buildQueryAllSQL(String table) {
-		StringBuilder sb = new StringBuilder("select ");
-		appendSelectFields(sb);
-		sb.append(" from ").append(getTableName(table));
-
-		String sql = sb.toString();
-		log.debug("buildQueryAllSql, class: " + elementType.getSimpleName()
-				+ ", sql: " + sql);
-		return sql;
-	}
-
-	/**
-	 * 构建查询所有的语句
+	 * 构建查询所有的占位符语句
 	 * 
 	 * @since
 	 * @param table
 	 * @return
 	 */
-	public PreparedSQL buildQueryAllPSSQL(String table) {
+	public PreparedSQL buildQueryAllPSQL(String table) {
+		SelectBuilder builder = SelectBuilder.build()
+				.table(getTableName(table));
+		builder.addCol(cfMap.keySet());
 
-		PreparedSQL psql = new PreparedSQL();
-
-		String sql = String.format("select * from %s ", getTableName(table));
-		psql.setSql(sql);
-		log.debug("buildQueryAllPSSQL: " + psql);
+		PreparedSQL psql = builder.toPreparedSQL();
+		log.debug("buildQueryAllPSQL: %s", psql);
 		return psql;
 	}
 
 	/**
-	 * 构建按列查询的语句
+	 * 按列查询
 	 * 
 	 * @since
 	 * @param table
 	 * @param columnNames
-	 * @param values
+	 * @param columnValues
 	 * @return
-	 * @deprecated
 	 * @throws BaseException
 	 */
-	public String buildQueryByColumnsSQL(String table, String[] columnNames,
-			Object[] values) throws BaseException {
-		if (columnNames == null || values == null
-				|| columnNames.length != values.length) {
-			log.error("column/value is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.FAIL);
-		}
-
-		StringBuilder sb = new StringBuilder("select ");
-		appendSelectFields(sb);
-		sb.append(" from ").append(getTableName(table)).append(" where ");
-		appendConditonFields(sb, table, columnNames, values);
-
-		String sql = sb.toString();
-		log.debug("buildQueryByColumnsSql, class: "
-				+ elementType.getSimpleName() + ", sql: " + sql);
-		return sb.toString();
-	}
-
 	public PreparedSQL buildQueryByColumnsPSQL(String table,
 			String[] columnNames, Object[] columnValues) throws BaseException {
-		if (columnNames == null || columnValues == null
-				|| columnNames.length != columnValues.length) {
-			log.error("column/value is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-		}
+		SelectBuilder builder = SelectBuilder.build()
+				.table(getTableName(table));
+		builder.addCol(cfMap.keySet());
 
-		PreparedSQL psql = new PreparedSQL();
-		StringBuilder columns = new StringBuilder("");
+		setConditions(builder.condition(true), table, columnNames, columnValues);
 
-		boolean first = true;
-		for (MappingField mf : cfMap.values()) {
-			if (!first) {
-				columns.append(",");
-			} else {
-				first = false;
-			}
-			columns.append(mf.column);
-		}
-
-		StringBuilder condition = buildColumnsCondition(psql, columnNames,
-				columnValues);
-
-		String sql = String.format("select %s from %s where %s ", columns,
-				getTableName(table), condition);
-		psql.setSql(sql);
-		log.debug("buildQueryByColumnsPSQL: " + psql);
+		PreparedSQL psql = builder.toPreparedSQL();
+		log.debug("buildQueryByColumnsPSQL: %s", psql);
 		return psql;
-	}
-
-	private StringBuilder buildColumnsCondition(PreparedSQL psql,
-			String[] columnNames, Object[] columnValues) {
-		StringBuilder condition = new StringBuilder("1=1");
-		for (int i = 0, c = columnNames.length; i < c; i++) {
-
-			String columnName = columnNames[i];
-			MappingField mf = get(columnName);
-
-			if (mf == null) {
-				log.error("column not defined, column: " + columnName
-						+ ", entity: " + elementType.getSimpleName());
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-
-			Object columnValue = columnValues[i];
-
-			if (columnValue == null) {
-				log.error("columnValue is null, column: " + columnName
-						+ ", entity: " + elementType.getSimpleName());
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-
-			if (columnValue instanceof Collection) {// 列表
-				@SuppressWarnings("rawtypes")
-				Collection values = (Collection) columnValue;
-				if (values.isEmpty()) {
-					continue;
-				}
-
-				List<String> preVals = new LinkedList<String>();
-				for (Object value : values) {
-					preVals.add(getParamPlaceholder(psql, mf, value));
-				}
-
-				String preparedValues = StringUtils.toString(preVals, ",");
-				condition.append(" and ").append(columnName).append(" in(")
-						.append(preparedValues).append(")");
-			} else {
-				String preparedValue = getParamPlaceholder(psql, mf,
-						columnValue);
-				condition.append(" and ").append(columnName).append("=")
-						.append(preparedValue);
-			}
-		}
-		return condition;
-	}
-
-	/**
-	 * 构建插入语句
-	 * 
-	 * @since
-	 * @param entity
-	 * @param table
-	 * @return
-	 * @throws BaseException
-	 */
-	public String buildInsertSQL(Object entity, String table)
-			throws BaseException {
-		StringBuilder sb = new StringBuilder("insert into ").append(
-				getTableName(table)).append(" (");
-		appendSelectFields(sb);
-		sb.append(") values (");
-		appendInsertFileds(sb, entity);
-		sb.append(")");
-
-		String sql = sb.toString();
-		log.debug("buildInsertSql, class: " + entity.getClass().getSimpleName()
-				+ ", sql: " + sql);
-		return sql;
 	}
 
 	/**
@@ -343,60 +155,36 @@ public final class MappingStruct implements Serializable {
 	 */
 	public PreparedSQL buildQueryPSQL(Object entity, String table)
 			throws BaseException {
-		PreparedSQL psql = new PreparedSQL();
+		SelectBuilder builder = SelectBuilder.build()
+				.table(getTableName(table));
 
-		StringBuilder columns = new StringBuilder("");
-		StringBuilder condition = new StringBuilder("1=1");
+		builder.addCol(cfMap.keySet());
 
-		boolean columnsFirst = true;
-		for (MappingField mf : cfMap.values()) {
-			if (!columnsFirst) {
-				columns.append(",");
-			} else {
-				columnsFirst = false;
-			}
-			columns.append(mf.column);
+		addKeyConditions(builder.condition(true), entity);
 
-			if (mf.isKey()) {
-				condition.append(" and ");
-
-				String v = getFieldPlaceholder(psql, entity, mf);
-				condition.append(mf.column).append("=").append(v);
-			}
-		}
-
-		String sql = String.format("select %s from %s where %s ", columns,
-				getTableName(table), condition);
-		psql.setSql(sql);
+		PreparedSQL psql = builder.toPreparedSQL();
 		log.debug("buildQueryPSQL: " + psql);
 		return psql;
 	}
 
+	/**
+	 * 构造插入语句
+	 * 
+	 * @since
+	 * @param entity
+	 * @param table
+	 * @return
+	 * @throws BaseException
+	 */
 	public PreparedSQL buildInsertPSQL(Object entity, String table)
 			throws BaseException {
-		PreparedSQL psql = new PreparedSQL();
+		InsertBuilder builder = InsertBuilder.build()
+				.table(getTableName(table));
 
-		StringBuilder columns = new StringBuilder("");
-		StringBuilder values = new StringBuilder("");
+		// 设置插入列
+		setColumns(builder, entity);
 
-		boolean first = true;
-		for (MappingField mf : cfMap.values()) {
-			if (!first) {
-				columns.append(",");
-				values.append(",");
-			} else {
-				first = false;
-			}
-
-			columns.append(mf.column);
-			String v = getFieldPlaceholder(psql, entity, mf);
-			values.append(v);
-		}
-
-		String sql = String.format("insert into %s(%s) values(%s)",
-				getTableName(table), columns, values);
-		psql.setSql(sql);
-
+		PreparedSQL psql = builder.toPreparedSQL();
 		log.debug("buildInsertPSQL: " + psql);
 		return psql;
 	}
@@ -412,42 +200,22 @@ public final class MappingStruct implements Serializable {
 	 */
 	public PreparedSQL buildUpdatePSQL(Object entity, String table)
 			throws BaseException {
-		PreparedSQL psql = new PreparedSQL();
+		UpdateBuilder builder = UpdateBuilder.build()
+				.table(getTableName(table));
 
-		StringBuilder values = new StringBuilder("");
-		boolean first = true;
-		for (MappingField mf : cfMap.values()) {
-			if (!first) {
-				values.append(",");
-			} else {
-				first = false;
-			}
-			String v = getFieldPlaceholder(psql, entity, mf);
-			values.append(mf.column).append("=").append(v);
-		}
+		// 设置更新列
+		setColumns(builder, entity);
 
-		boolean keyValid = false;
-		StringBuilder condition = new StringBuilder("1=1");
-		for (MappingField mf : cfMap.values()) {
-			if (mf.isKey()) {
-				condition.append(" and ");
+		// 设置主键条件
+		ConditionBuilder condition = builder.condition(true);
+		addKeyConditions(condition, entity);
 
-				String v = getFieldPlaceholder(psql, entity, mf);
-				condition.append(mf.column).append("=").append(v);
-
-				if (!keyValid) {
-					keyValid = true;
-				}
-			}
-		}
-		if (!keyValid) {
-			// TODO
+		if (condition.isEmpty()) {
+			log.error("key not found, clazz: %s", new Object[] { elementType });
 			throw new BaseException(BaseErrorCode.COMN_DATA_TYPE_INVALID);
 		}
 
-		String sql = String.format("update %s set %s where %s",
-				getTableName(table), values, condition);
-		psql.setSql(sql);
+		PreparedSQL psql = builder.toPreparedSQL();
 		log.debug("buildUpdatePSQL: " + psql);
 		return psql;
 	}
@@ -463,92 +231,18 @@ public final class MappingStruct implements Serializable {
 	 */
 	public PreparedSQL buildDeletePSQL(Object entity, String table)
 			throws BaseException {
-		PreparedSQL psql = new PreparedSQL();
 
-		StringBuilder condition = new StringBuilder("");
-		boolean first = true;
-		for (MappingField mf : cfMap.values()) {
-			if (mf.isKey()) {
-				if (!first) {
-					condition.append(" and ");
-				} else {
-					first = false;
-				}
+		DeleteBuilder builder = DeleteBuilder.build()
+				.table(getTableName(table));
+		addKeyConditions(builder.condition(true), entity);
 
-				String v = getFieldPlaceholder(psql, entity, mf);
-				condition.append(mf.column).append("=").append(v);
-			}
-		}
-
-		String sql = String.format("delete from %s where %s",
-				getTableName(table), condition);
-		psql.setSql(sql);
-		log.debug("buildDeletePSQL: " + psql);
+		PreparedSQL psql = builder.toPreparedSQL();
+		log.debug("buildDeletePSQL: %s", psql);
 		return psql;
 	}
 
 	/**
-	 * 构造实体对象指定字段的预定义参数，并获取占位符
-	 * 
-	 * @since
-	 * @param psql
-	 * @param mf
-	 * @param entity
-	 *            实体对象
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 */
-	private String getFieldPlaceholder(PreparedSQL psql, Object entity,
-			MappingField mf) {
-		SqlParam sqlParam = psql.addField(entity, mf.field, mf.jc.type());
-		return sqlParam.getPlaceHolder();
-	}
-
-	/**
-	 * 构造参数值对应的的预定义参数，并获取占位符
-	 * 
-	 * @since
-	 * @param psql
-	 * @param mf
-	 *            字段定义
-	 * @param value
-	 *            参数值
-	 * @return
-	 * @throws BaseException
-	 */
-	private String getParamPlaceholder(PreparedSQL psql, MappingField mf,
-			Object value) throws BaseException {
-		SqlParam sqlParam = psql.addParam(mf.field.getType(), mf.jc.type(),
-				value);
-		return sqlParam.getPlaceHolder();
-	}
-
-	/**
 	 * 构建更新语句
-	 * 
-	 * @since
-	 * @param entity
-	 * @param table
-	 * @return
-	 * @throws BaseException
-	 */
-	public String buildUpdateSQL(Object entity, String table)
-			throws BaseException {
-		StringBuilder sb = new StringBuilder("update ").append(
-				getTableName(table)).append(" set ");
-		appendSetFields(sb, entity);
-		sb.append(" where ");
-		appendConditonFields(sb, entity);
-
-		String sql = sb.toString();
-		log.debug("buildUpdateSql, class: " + entity.getClass().getSimpleName()
-				+ ", sql: " + sql);
-		return sql;
-	}
-
-	/**
-	 * 构建指定列更新语句
 	 * 
 	 * @since
 	 * @param table
@@ -558,138 +252,22 @@ public final class MappingStruct implements Serializable {
 	 * @param conditionValues
 	 * @return
 	 */
-	public String buildUpdateByColumnsSQL(String table, String[] updateColumns,
-			Object[] updateValues, String[] conditionColumns,
-			Object[] conditionValues) {
-		if (updateColumns == null || updateValues == null
-				|| updateColumns.length == 0 || updateValues.length == 0
-				|| updateColumns.length != updateValues.length) {
-			log.error("column/value to update is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-		}
-		if (conditionColumns == null || conditionValues == null
-				|| conditionColumns.length == 0 || conditionValues.length == 0
-				|| conditionColumns.length != conditionValues.length) {
-			log.error("column/value condition is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-		}
-
-		StringBuilder sb = new StringBuilder("update ").append(
-				getTableName(table)).append(" set ");
-		appendSetFields(sb, table, updateColumns, updateValues);
-		sb.append(" where ");
-		appendConditonFields(sb, table, conditionColumns, conditionValues);
-
-		String sql = sb.toString();
-		log.debug("buildUpdateByColumnsSql, class: "
-				+ elementType.getSimpleName() + ", sql: " + sql);
-		return sql;
-	}
-
 	public PreparedSQL buildUpdateByColumnsPSQL(String table,
 			String[] updateColumns, Object[] updateValues,
 			String[] conditionColumns, Object[] conditionValues) {
-		if (updateColumns == null || updateValues == null
-				|| updateColumns.length == 0 || updateValues.length == 0
-				|| updateColumns.length != updateValues.length) {
-			log.error("column/value to update is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-		}
-		if (conditionColumns == null || conditionValues == null
-				|| conditionColumns.length == 0 || conditionValues.length == 0
-				|| conditionColumns.length != conditionValues.length) {
-			log.error("column/value condition is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-		}
+		UpdateBuilder builder = UpdateBuilder.build()
+				.table(getTableName(table));
 
-		PreparedSQL psql = new PreparedSQL();
-		StringBuilder columns = new StringBuilder("");
+		// 设置更新列
+		setColumns(builder, table, updateColumns, updateValues);
 
-		boolean first = true;
-		for (int i = 0; i < updateColumns.length; i++) {
-			if (!first) {
-				columns.append(",");
-			} else {
-				first = false;
-			}
-
-			String column = updateColumns[i];
-			MappingField mf = get(column);
-			if (mf == null) {
-				log.error("column not defined, column: " + column
-						+ ", entity: " + elementType.getSimpleName());
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-
-			Object valObj = updateValues[i];
-			String value = getParamPlaceholder(psql, mf, valObj);
-			columns.append(column).append("=").append(value);
-		}
-
-		StringBuilder condition = buildColumnsCondition(psql, conditionColumns,
+		// 设置条件
+		setConditions(builder.condition(true), table, conditionColumns,
 				conditionValues);
 
-		String sql = String.format("update %s set %s where %s",
-				getTableName(table), columns, condition);
-		psql.setSql(sql);
+		PreparedSQL psql = builder.toPreparedSQL();
 		log.debug("buildUpdateByColumnsPSQL: " + psql);
 		return psql;
-	}
-
-	/**
-	 * 构建删除语句
-	 * 
-	 * @since
-	 * @param entity
-	 * @param table
-	 * @return
-	 * @throws BaseException
-	 */
-	public String buildDeleteSQL(Object entity, String table)
-			throws BaseException {
-		StringBuilder sb = new StringBuilder("delete from ").append(
-				getTableName(table)).append(" where ");
-		appendConditonFields(sb, entity);
-
-		String sql = sb.toString();
-		log.debug("buildDeleteSql, class: " + entity.getClass().getSimpleName()
-				+ ", sql: " + sql);
-		return sql;
-	}
-
-	/**
-	 * 构建按列删除的语句
-	 * 
-	 * @since
-	 * @param table
-	 * @param columnNames
-	 * @param columnValues
-	 * @return
-	 * @throws BaseException
-	 */
-	public String buildDeleteByColumnsSQL(String table, String[] columnNames,
-			Object[] columnValues) throws BaseException {
-		if (columnNames == null || columnValues == null
-				|| columnNames.length == 0 || columnValues.length == 0
-				|| columnNames.length != columnValues.length) {
-			log.error("column/value is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-		}
-
-		StringBuilder sb = new StringBuilder("delete from ").append(
-				getTableName(table)).append(" where ");
-		appendConditonFields(sb, table, columnNames, columnValues);
-
-		String sql = sb.toString();
-		log.debug("buildDeleteByColumnsSql, class: "
-				+ elementType.getSimpleName() + ", sql: " + sql);
-		return sb.toString();
 	}
 
 	/**
@@ -704,169 +282,350 @@ public final class MappingStruct implements Serializable {
 	 */
 	public PreparedSQL buildDeleteByColumnsPSQL(String table,
 			String[] columnNames, Object[] columnValues) throws BaseException {
-		if (columnNames == null || columnValues == null
-				|| columnNames.length == 0 || columnValues.length == 0
-				|| columnNames.length != columnValues.length) {
-			log.error("column/value is empty or length is unmatched, table: "
-					+ table + ", entity: " + elementType.getSimpleName());
-			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-		}
+		DeleteBuilder builder = DeleteBuilder.build()
+				.table(getTableName(table));
+		setConditions(builder.condition(true), table, columnNames, columnValues);
 
-		PreparedSQL psql = new PreparedSQL();
-		StringBuilder condition = buildColumnsCondition(psql, columnNames,
-				columnValues);
-		String sql = String.format("delete from %s where %s",
-				getTableName(table), condition);
-		psql.setSql(sql);
-		log.debug("buildDeleteByColumnsSQL, psql: " + sql);
+		PreparedSQL psql = builder.toPreparedSQL();
+		log.debug("buildDeleteByColumnsSQL: %s", psql);
 		return psql;
 	}
 
 	/**
-	 * 添加更新的字段，除key外
+	 * 构造批量插入语句
 	 * 
 	 * @since
-	 * @param sb
+	 * @param entities
+	 * @param table
+	 * @return
+	 * @throws BaseException
+	 */
+	public <T> BatchPreparedSQL buildBatchInsertPSQL(List<T> entities,
+			String table) throws BaseException {
+		// AnnotationBatchBuilder builder = new
+		// AnnotationBatchBuilder(getTableName(table), entities);
+
+		InsertBuilder builder = BatchInsertBuilder.build().table(
+				getTableName(table));
+
+		// 设置插入列
+
+		PreparedSQL psql = builder.toPreparedSQL();
+		log.debug("buildInsertPSQL: " + psql);
+		for (T entity : entities) {
+			setColumns(builder, entity);
+			((BatchInsertBuilder) builder).addBatch();
+		}
+
+		return (BatchPreparedSQL) builder.toPreparedSQL();
+	}
+
+	/**
+	 * 添加主键条件
+	 * 
+	 * @since
+	 * @param condition
 	 * @param entity
 	 */
-	private void appendSetFields(StringBuilder sb, Object entity) {
-		boolean first = true;
+	private void addKeyConditions(ConditionBuilder condition, Object entity) {
 		for (MappingField mf : cfMap.values()) {
 			if (mf.isKey()) {
-				continue;
+				Object value = getFiledValue(entity, mf);
+				addCondition(condition, mf, value);
 			}
-
-			if (!first) {
-				sb.append(",");
-			} else {
-				first = false;
-			}
-
-			String value = mf.getValue(entity);
-			sb.append(mf.column).append("=").append(value);
 		}
 	}
 
 	/**
-	 * 添加更新的字段
+	 * 获取字段值
 	 * 
 	 * @since
-	 * @param sb
+	 * @param entity
+	 * @param mf
+	 * @return
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 */
+	private Object getFiledValue(Object entity, MappingField mf)
+			throws BaseException {
+		try {
+			return mf.field.get(entity);
+		} catch (Exception e) {
+			log.error("getFiledValue(entity[%s], mf[%s]) failed", new Object[] {
+					entity, mf });
+			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
+		}
+	}
+
+	/**
+	 * 设置列条件
+	 * 
+	 * @since
+	 * @param condition
 	 * @param table
-	 * @param names
+	 * @param columnNames
 	 * @param values
 	 */
-	private void appendSetFields(StringBuilder sb, String table,
-			String[] names, Object[] values) {
-		for (int i = 0, c = names.length; i < c; i++) {
-			String column = names[i];
-
-			MappingField mf = get(column);
-
-			if (mf == null) {
-				log.error("appendSetFields, column not defined, table: "
-						+ getTableName(table) + ", column: " + column
-						+ ", entity: " + elementType.getSimpleName());
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-
-			if (i != 0) {
-				sb.append(",");
-			}
-
-			String condition = mf.getSetSql(values[i]);
-			sb.append(condition);
+	private void setConditions(ConditionBuilder condition, String table,
+			String[] columnNames, Object[] values) {
+		if (columnNames == null || values == null
+				|| columnNames.length != values.length) {
+			log.error(
+					"column/value is empty or length is unmatched, table: %s, entity: %s",
+					new Object[] { table, elementType.getSimpleName() });
+			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
 		}
-	}
 
-	/**
-	 * 添加条件字段,key
-	 * 
-	 * @since
-	 * @param sb
-	 * @param entity
-	 */
-	private void appendConditonFields(StringBuilder sb, Object entity) {
-		boolean first = true;
-		for (MappingField mf : cfMap.values()) {
-			if (!mf.isKey()) {
+		for (int i = 0; i < columnNames.length; i++) {
+			MappingField mf = get(columnNames[i]);
+			if (mf == null) {
 				continue;
 			}
 
-			if (!first) {
-				sb.append(" and ");
+			addCondition(condition, mf, values[i]);
+		}
+	}
+
+	/**
+	 * 添加单列条件
+	 * 
+	 * @since
+	 * @param condition
+	 * @param mf
+	 * @param value
+	 */
+	private void addCondition(ConditionBuilder condition, MappingField mf,
+			Object value) {
+		// 值为空，不作为条件
+		if (value == null) {
+			return;
+		}
+
+		String dataType = mf.jc.type();
+		Field field = mf.field;
+		Class<?> requiredType = field.getType();
+		String col = mf.column;
+		try {
+			final Class<?> clazz = value.getClass();
+			if (DataType.isNull(dataType)) {
+				if (String.class.equals(requiredType)) {
+					if (clazz.isArray() || value instanceof Collection) {
+						condition.add(mf.column + " in %s", value);
+					} else {
+						condition.stringEqual(col, (String) value);
+					}
+				} else if (int.class.equals(requiredType)
+						|| short.class.equals(requiredType)
+						|| Integer.class.equals(requiredType)
+						|| Short.class.equals(requiredType)) {
+					if (clazz.isArray() || value instanceof Collection) {
+						condition.add(mf.column + " in %d", value);
+					} else {
+						condition.intEqual(col, ((Number) value).intValue());
+					}
+				} else if (long.class.equals(requiredType)
+						|| Long.class.equals(requiredType)
+						|| BigDecimal.class.equals(requiredType)) {
+					if (clazz.isArray() || value instanceof Collection) {
+						condition.add(mf.column + " in %d", value);
+					} else {
+						condition.longEqual(col, ((Number) value).longValue());
+					}
+				} else if (Timestamp.class.equals(requiredType)) {
+					condition.tsEqual(col, (Timestamp) value);
+				} else if (byte[].class.equals(requiredType)) {
+					/** 对应于DB2的VARCHAR(CHAR) FOR BIT DATA */
+					condition.binEqual(col, (byte[]) value);
+				} else if (float.class.equals(requiredType)
+						|| Float.class.equals(requiredType)) {
+					condition.floatEqual(col, ((Number) value).floatValue());
+				} else if (double.class.equals(requiredType)
+						|| Double.class.equals(requiredType)) {
+					condition.doubleEqual(col, ((Number) value).doubleValue());
+				} else {
+					/** 其他类型统一当作string处理 */
+					condition.stringEqual(col, value.toString());
+				}
 			} else {
-				first = false;
+				if (DataType.STRING.equals(dataType)) {
+					if (clazz.isArray() || value instanceof Collection) {
+						condition.add(mf.column + " in %s", value);
+					} else {
+						condition.stringEqual(col, value.toString());
+					}
+				} else if (DataType.INT.equals(dataType)) {
+					if (clazz.isArray() || value instanceof Collection) {
+						condition.add(mf.column + " in %d", value);
+					} else if (value instanceof Number) {
+						condition.intEqual(col, ((Number) value).intValue());
+					} else {
+						condition.intEqual(col,
+								Integer.parseInt(value.toString().trim()));
+					}
+				} else if (DataType.DECIMAL.equals(dataType)) {
+					if (clazz.isArray() || value instanceof Collection) {
+						condition.add(mf.column + " in %d", value);
+					} else if (value instanceof Number) {
+						condition.longEqual(col, ((Number) value).longValue());
+					} else {
+						condition.longEqual(col,
+								Long.parseLong(value.toString().trim()));
+					}
+				} else if (DataType.TIMESTAMP.equals(dataType)) {
+					if (value instanceof Timestamp) {
+						condition.tsEqual(col, (Timestamp) value);
+					} else {
+						condition.tsEqual(col, value.toString());
+					}
+				} else if (DataType.BINARY.equals(dataType)) {
+					/** 对应于DB2的VARCHAR(CHAR) FOR BIT DATA */
+					if (value instanceof byte[]) {
+						condition.binEqual(col, (byte[]) value);
+					} else {
+						condition.binEqual(col, value.toString());
+					}
+				} else if (DataType.FLOAT.equals(dataType)) {
+					if (value instanceof Number) {
+						condition
+								.floatEqual(col, ((Number) value).floatValue());
+					} else {
+						condition.floatEqual(col,
+								Float.parseFloat(value.toString().trim()));
+					}
+				} else {
+					condition.stringEqual(col, value.toString());
+				}
 			}
-
-			String value = mf.getValue(entity);
-			sb.append(mf.column).append("=").append(value);
+		} catch (Exception e) {
+			String message = "addField failed, value: " + value
+					+ ", requiredType: " + requiredType + ", type: "
+					+ ", dataType: " + dataType;
+			log.error(message, e);
+			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
 		}
 	}
 
 	/**
-	 * 添加按列查询的条件
+	 * 设置对象中的待插入或更新的列
 	 * 
 	 * @since
-	 * @param sb
-	 * @param columnNames
-	 * @param columnValues
+	 * @param builder
+	 * @param entity
+	 * @throws BaseException
 	 */
-	private void appendConditonFields(StringBuilder sb, String table,
-			String[] columnNames, Object[] columnValues) {
-		sb.append(" 1=1 ");
-		for (int i = 0, c = columnNames.length; i < c; i++) {
-			String column = columnNames[i];
-			MappingField mf = get(column);
-
-			if (mf == null) {
-				log.error("appendConditonFields, column not defined, table: "
-						+ getTableName(table) + ", column: " + column
-						+ ", entity: " + elementType.getSimpleName());
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-
-			sb.append(" and " + mf.getConditionSql(columnValues[i]));
-		}
-	}
-
-	/**
-	 * 添加查询的列名
-	 * 
-	 * @since
-	 * @param sb
-	 */
-	private void appendSelectFields(StringBuilder sb) {
-		boolean first = true;
-		for (String column : cfMap.keySet()) {
-			if (!first) {
-				sb.append(",");
-			} else {
-				first = false;
-			}
-			sb.append(column);
-		}
-	}
-
-	/**
-	 * 添加列值
-	 * 
-	 * @since
-	 * @param sb
-	 */
-	private void appendInsertFileds(StringBuilder sb, Object entity) {
-		boolean first = true;
+	@SuppressWarnings("rawtypes")
+	private void setColumns(ColumnBuilder builder, Object entity)
+			throws BaseException {
 		for (MappingField mf : cfMap.values()) {
-			if (!first) {
-				sb.append(",");
-			} else {
-				first = false;
+			Object value = getFiledValue(entity, mf);
+			addColumn(builder, mf, value);
+		}
+	}
+
+	/**
+	 * 设置更新列
+	 * 
+	 * @since
+	 * @param condition
+	 * @param table
+	 * @param updateColumns
+	 * @param updateValues
+	 */
+	@SuppressWarnings("rawtypes")
+	private void setColumns(ColumnBuilder builder, String table,
+			String[] updateColumns, Object[] updateValues) {
+		if (updateColumns == null || updateValues == null
+				|| updateColumns.length == 0 || updateValues.length == 0
+				|| updateColumns.length != updateValues.length) {
+			log.error("column/value to update is empty or length is unmatched, table: "
+					+ table + ", entity: " + elementType.getSimpleName());
+			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
+		}
+
+		for (int i = 0; i < updateColumns.length; i++) {
+			MappingField mf = get(updateColumns[i]);
+			if (mf == null) {
+				continue;
 			}
 
-			String value = mf.getValue(entity);
-			sb.append(value);
+			addColumn(builder, mf, updateValues[i]);
+		}
+	}
+
+	/**
+	 * 添加待插入或更新的列
+	 * 
+	 * @since
+	 * @param builder
+	 * @param mf
+	 * @param value
+	 */
+	@SuppressWarnings({ "rawtypes" })
+	private void addColumn(ColumnBuilder builder, MappingField mf, Object value) {
+		// 值为空，不作为条件
+		if (value == null) {
+			return;
+		}
+
+		String dataType = mf.jc.type();
+		Field field = mf.field;
+		Class<?> requiredType = field.getType();
+		String col = mf.column;
+		try {
+			if (DataType.isNull(dataType)) {
+				if (String.class.equals(requiredType)) {
+					builder.stringCol(col, value.toString());
+				} else if (int.class.equals(requiredType)
+						|| short.class.equals(requiredType)
+						|| Integer.class.equals(requiredType)
+						|| Short.class.equals(requiredType)) {
+					builder.intCol(col, value);
+				} else if (long.class.equals(requiredType)
+						|| Long.class.equals(requiredType)
+						|| BigDecimal.class.equals(requiredType)) {
+					builder.longCol(col, value);
+				} else if (Timestamp.class.equals(requiredType)) {
+					builder.tsCol(col, (Timestamp) value);
+				} else if (byte[].class.equals(requiredType)) {
+					/** 对应于DB2的VARCHAR(CHAR) FOR BIT DATA */
+					builder.binCol(col, (byte[]) value);
+				} else if (float.class.equals(requiredType)
+						|| Float.class.equals(requiredType)) {
+					builder.floatCol(col, ((Number) value).floatValue());
+				} else if (double.class.equals(requiredType)
+						|| Double.class.equals(requiredType)) {
+					builder.doubleCol(col, ((Number) value).doubleValue());
+				} else {
+					/** 其他类型统一当作string处理 */
+					builder.stringCol(col, value.toString());
+				}
+			} else {
+				if (DataType.STRING.equals(dataType)) {
+					builder.stringCol(col, value);
+				} else if (DataType.INT.equals(dataType)) {
+					builder.intCol(col, value);
+				} else if (DataType.DECIMAL.equals(dataType)) {
+					builder.longCol(col, value);
+				} else if (DataType.TIMESTAMP.equals(dataType)) {
+					builder.tsCol(col, value);
+				} else if (DataType.BINARY.equals(dataType)) {
+					/** 对应于DB2的VARCHAR(CHAR) FOR BIT DATA */
+					builder.binCol(col, value);
+				} else if (DataType.FLOAT.equals(dataType)) {
+					builder.floatCol(col, value);
+				} else {
+					builder.stringCol(col, value);
+				}
+			}
+		} catch (Exception e) {
+			String message = "addField failed, value: " + value
+					+ ", requiredType: " + requiredType + ", type: "
+					+ ", dataType: " + dataType;
+			log.error(message, e);
+			if (e instanceof BaseException) {
+				throw (BaseException) e;
+			}
+			throw new BaseException(BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
 		}
 	}
 
@@ -962,261 +721,6 @@ public final class MappingStruct implements Serializable {
 			this.jc = jc;
 			this.field = field;
 			this.field.setAccessible(true);
-		}
-
-		// /**
-		// * 获取数据类型
-		// *
-		// * @since
-		// * @return
-		// */
-		// public String getDataType() {
-		// String dataType = jc.type();
-		// if (!StringUtils.isEmpty(dataType) &&
-		// !dataType.equals(DataType.NONE)) {
-		// return dataType;
-		// }
-		//
-		// Class<?> requiredType = field.getType();
-		// if (String.class.equals(requiredType)) {
-		// return DataType.STRING;
-		// } else if (int.class.equals(requiredType) ||
-		// Integer.class.equals(requiredType)
-		// || long.class.equals(requiredType) || Long.class.equals(requiredType)
-		// || byte.class.equals(requiredType) || Byte.class.equals(requiredType)
-		// || short.class.equals(requiredType) ||
-		// Short.class.equals(requiredType)) {
-		// return DataType.INT;
-		// } else if (java.sql.Timestamp.class.equals(requiredType) ||
-		// java.util.Date.class.equals(requiredType)
-		// || java.sql.Date.class.equals(requiredType) ||
-		// java.sql.Time.class.equals(requiredType)) {
-		// return DataType.TIMESTAMP;
-		// } else if (float.class.equals(requiredType) ||
-		// Float.class.equals(requiredType)
-		// || double.class.equals(requiredType) ||
-		// Double.class.equals(requiredType)) {
-		// return DataType.FLOAT;
-		// } else {
-		// throw new BaseException(BaseErrorCode.COMN_DATA_TYPE_MIS_MATCH, new
-		// Object[] { requiredType });
-		// }
-		// }
-
-		/**
-		 * 获取用于Sql的值
-		 * 
-		 * @since
-		 * @param entity
-		 * @return
-		 */
-		public String getValue(Object entity) {
-			String value = null;
-			try {
-				Object v = field.get(entity);
-				value = getColumnValue(v);
-				return value;
-			} catch (Exception e) {
-				String message = "convert field to sql failed, class: "
-						+ entity.getClass().getSimpleName() + ", field: "
-						+ field.getName() + ", type: "
-						+ field.getType().getName() + ", column: " + column
-						+ ", dataType: " + jc.type() + ", value: " + value;
-				log.error(message, e);
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-		}
-
-		@SuppressWarnings("unused")
-		public Object getObject(Object entity) {
-			try {
-				return field.get(entity);
-			} catch (Exception e) {
-				log.error(String.format(
-						"getObject(entity[%s]) failed, field[%s]", entity,
-						field), e);
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-		}
-
-		@SuppressWarnings("unused")
-		public String getString(Object entity) {
-			try {
-				return field.get(entity).toString();
-			} catch (Exception e) {
-				String message = "convert field to sql failed, class: "
-						+ entity.getClass().getSimpleName() + ", field: "
-						+ field.getName() + ", type: "
-						+ field.getType().getName() + ", column: " + column
-						+ ", dataType: " + jc.type() + ", value: "
-						+ getValue(entity);
-				log.error(message, e);
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-		}
-
-		@SuppressWarnings("unused")
-		public int getInt(Object entity) {
-			try {
-				Class<?> requiredType = field.getType();
-				if (int.class.equals(requiredType)
-						|| Integer.class.equals(requiredType)
-						|| long.class.equals(requiredType)
-						|| Long.class.equals(requiredType)
-						|| byte.class.equals(requiredType)
-						|| Byte.class.equals(requiredType)
-						|| short.class.equals(requiredType)
-						|| Short.class.equals(requiredType)) {
-					return field.getInt(entity);
-				} else if (String.class.equals(requiredType)) {
-					String s = field.get(entity).toString();
-					return Integer.parseInt(s.trim());
-				} else {
-					throw new Exception("int required: " + requiredType);
-				}
-			} catch (Exception e) {
-				String message = "convert field to sql failed, class: "
-						+ entity.getClass().getSimpleName() + ", field: "
-						+ field.getName() + ", type: "
-						+ field.getType().getName() + ", column: " + column
-						+ ", dataType: " + jc.type() + ", value: "
-						+ getValue(entity);
-				log.error(message, e);
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-		}
-
-		/**
-		 * 构造设置列值得sql
-		 * 
-		 * @since
-		 * @param columnValue
-		 * @return
-		 */
-		public String getSetSql(Object columnValue) {
-			try {
-				String value = getColumnValue(columnValue);
-				return column + "=" + value;
-			} catch (Exception e) {
-				String message = "getSetSql failed,"
-						+ field.getType().getName() + ", column: " + column
-						+ ", dataType: " + jc.type() + ", value: "
-						+ columnValue;
-				log.error(message, e);
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-		}
-
-		/**
-		 * 获取列值对应的条件语句
-		 * 
-		 * @since
-		 * @param columnValue
-		 * @return
-		 */
-		@SuppressWarnings("rawtypes")
-		public String getConditionSql(Object columnValue) {
-			try {
-				if (columnValue instanceof Collection) {// 列表
-					Collection c = (Collection) columnValue;
-					List<String> values = new ArrayList<String>(c.size());
-					for (Object obj : c) {
-						String value = getColumnValue(obj);
-						values.add(value);
-					}
-					String v = StringUtils.toString(values, ",");
-					return column + " in(" + v + ")";
-				} else { // 单个数据
-					String value = getColumnValue(columnValue);
-					return column + "=" + value;
-				}
-			} catch (Exception e) {
-				String message = "getConditionSql failed, field: "
-						+ field.getName() + ", type: "
-						+ field.getType().getName() + ", column: " + column
-						+ ", dataType: " + jc.type() + ", columnValue: "
-						+ columnValue;
-				log.error(message, e);
-				throw new BaseException(
-						BaseErrorCode.COMN_DATA_MAPPING_EXCEPTOIN);
-			}
-		}
-
-		/**
-		 * 按列名获取值
-		 * 
-		 * @since
-		 * @param columnValue
-		 * @return
-		 * @throws IllegalArgumentException
-		 * @throws IllegalAccessException
-		 */
-		private String getColumnValue(Object columnValue)
-				throws IllegalArgumentException, IllegalAccessException {
-			String value = columnValue == null ? null : columnValue.toString();
-			String dataType = jc.type();
-			int len = jc.length();
-			if (!StringUtils.isEmpty(dataType)
-					&& !dataType.equals(DataType.NONE)) {
-				if (dataType.equals(DataType.STRING)) {
-					value = forLenLimit(value, len);
-				}
-
-				value = JdbcUtils.valueForDB(value, dataType);
-			} else {
-				Class<?> requiredType = field.getType();
-				if (requiredType.equals(String.class)) {
-					value = forLenLimit(value, len);
-				}
-
-				value = JdbcUtils.valueForDB(value, requiredType);
-			}
-
-			return value;
-		}
-
-		/**
-		 * 截去超过数据库限制的字符
-		 * 
-		 * 
-		 * @since
-		 * @param value
-		 * @param len
-		 * @return
-		 */
-		private String forLenLimit(String value, int len) {
-			if (value == null || len <= 0) {
-				return value;
-			}
-
-			String str = "";
-			try {
-				byte[] bytes = value.getBytes("GBK");
-				if (bytes.length > len) {
-					byte[] b1 = Arrays.copyOf(bytes, len);
-					byte[] b2 = Arrays.copyOf(bytes, len + 1);
-					String s1 = new String(b1, "GBK");
-					String s2 = new String(b2, "GBK");
-
-					if (s1.length() == s2.length()) {
-						byte[] b = Arrays.copyOf(bytes, len - 1);
-						str = new String(b, "GBK");
-					} else {
-						str = s1;
-					}
-				} else {
-					str = value;
-				}
-			} catch (UnsupportedEncodingException e) {
-				log.error(e);
-			}
-
-			return str;
 		}
 
 		/**

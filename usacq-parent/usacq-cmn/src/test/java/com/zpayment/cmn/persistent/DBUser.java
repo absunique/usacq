@@ -1,4 +1,4 @@
-package persistent;
+package com.zpayment.cmn.persistent;
 
 import com.zpayment.cmn.persistent.jdbc.annonation.JdbcColumn;
 import com.zpayment.cmn.persistent.jdbc.annonation.JdbcView;

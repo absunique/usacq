@@ -20,7 +20,7 @@ import com.zpayment.cmn.persistent.jdbc.JdbcUtils;
 /**
  * 一行中只有一列的转换
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 

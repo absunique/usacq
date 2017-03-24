@@ -15,21 +15,18 @@ import java.sql.SQLException;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+
 import com.zpayment.cmn.persistent.jdbc.param.PreparedSQL;
 
 /**
- * spring jdbcTemplate PreparedStatementCreator适配
- * 用于：
- * 插入（批量插入）
- * 更新
- * 删除
+ * spring jdbcTemplate PreparedStatementCreator适配 用于： 插入（批量插入） 更新 删除
  * 
  * @author peiwang
  * @param <T>
  * @since 2017年3月23日
  */
-public class PreparedSqlCallBackAdaptor<T> implements
-		PreparedStatementCallback<T> {
+public class PreparedSqlCallBackAdaptor extends AbstractSinglePreparedSqlSetter
+		implements PreparedStatementCallback<Integer> {
 
 	private PreparedSQL pSql;
 
@@ -45,11 +42,10 @@ public class PreparedSqlCallBackAdaptor<T> implements
 	 * (java.sql.PreparedStatement)
 	 */
 	@Override
-	public T doInPreparedStatement(PreparedStatement ps) throws SQLException,
+	public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException,
 			DataAccessException {
-		pSql.setValues(ps);
-		ps.executeUpdate();
-		return null;
+		setValuesByPreparedSql(pSql, ps);
+		return ps.executeUpdate();
 	}
 
 }

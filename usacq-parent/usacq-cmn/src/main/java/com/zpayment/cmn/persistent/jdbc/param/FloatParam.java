@@ -7,7 +7,6 @@
  * PERMISSION OF ZPayment CO., LTD.
  * 2016-11-22 - Create By peiwang
  */
-
 package com.zpayment.cmn.persistent.jdbc.param;
 
 import java.sql.PreparedStatement;
@@ -16,28 +15,31 @@ import java.sql.SQLException;
 import com.zpayment.cmn.Const.DataType;
 
 /**
- * 浮点参数
+ * 浮点值查询参数
+ * 
  * @author peiwang
- * @since 2017年3月23日
+ * @version
+ * @since
+ * 
  */
 public class FloatParam extends SqlParamAdapter {
 
-	private float value;
+    private float value;
 
-	public FloatParam(float value) {
-		super(DataType.FLOAT);
+    public FloatParam(float value) {
+        super(DataType.FLOAT);
 
-		this.value = value;
-	}
+        this.value = value;
+    }
 
-	@Override
-	public String toString() {
-		return "(Float)" + value;
-	}
-
-	@Override
-	public void setPreparedParamValue(int parameterIndex, PreparedStatement ps)
-			throws SQLException {
-		ps.setFloat(parameterIndex, value);
-	}
+    
+    @Override
+    public String toString() {
+        return "(Float)" + value;
+    }
+    
+    @Override
+    public void setPreparedParamValue(int parameterIndex, PreparedStatement ps) throws SQLException {
+        ps.setFloat(parameterIndex, value);
+    }
 }

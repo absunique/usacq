@@ -20,7 +20,7 @@ import com.zpayment.cmn.Const;
 /**
  * @link RowMapper 用于映射列数据
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 

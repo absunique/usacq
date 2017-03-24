@@ -7,7 +7,6 @@
  * PERMISSION OF ZPayment CO., LTD.
  * 2016-11-22 - Create By peiwang
  */
-
 package com.zpayment.cmn.persistent.jdbc.param;
 
 import java.sql.PreparedStatement;
@@ -16,10 +15,12 @@ import java.sql.SQLException;
 import com.zpayment.cmn.Const.DataType;
 
 /**
- * double参数
+ * 双精度参数
  * 
  * @author peiwang
- * @since 2017年3月23日
+ * @version
+ * @since
+ * 
  */
 public class DoubleParam extends SqlParamAdapter {
 

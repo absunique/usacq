@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 /**
  * 用于@link RowMapper 映射行数据
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 

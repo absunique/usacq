@@ -23,7 +23,7 @@ import com.zpayment.cmn.persistent.jdbc.JdbcUtils;
 /**
  * 将行数据转换成按列的Map
  * 
- * @author gys
+ * @author peiwang
  * @version
  * @since
  * 

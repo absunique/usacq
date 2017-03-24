@@ -18,10 +18,12 @@ import com.zpayment.cmn.Const.DefaultValue;
 import com.zpayment.cmn.persistent.jdbc.JdbcUtils;
 
 /**
- * 时间戳参数
+ * TimestampParam
  * 
  * @author peiwang
- * @since 2017年3月23日
+ * @version
+ * @since
+ * 
  */
 public class TimestampParam extends SqlParamAdapter {
 
@@ -85,4 +87,38 @@ public class TimestampParam extends SqlParamAdapter {
 			return "(Timestamp)'" + ts + "'";
 		}
 	}
+	
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((ts == null) ? 0 : ts.hashCode());
+        result = prime * result + ((tsStr == null) ? 0 : tsStr.hashCode());
+        result = prime * result + (tsValue ? 1231 : 1237);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TimestampParam other = (TimestampParam) obj;
+        if (ts == null) {
+            if (other.ts != null)
+                return false;
+        } else if (!ts.equals(other.ts))
+            return false;
+        if (tsStr == null) {
+            if (other.tsStr != null)
+                return false;
+        } else if (!tsStr.equals(other.tsStr))
+            return false;
+        if (tsValue != other.tsValue)
+            return false;
+        return true;
+    }
 }
