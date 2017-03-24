@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import com.zpayment.cmn.nview.intf.NviewManager;
 import com.zpayment.cmn.persistent.DBUser;
 import com.zpayment.cmn.persistent.PersistentService;
-import com.zpayment.cmn.persistent.TestPersistent;
 
 /**
  * @author peiwang
@@ -27,18 +26,21 @@ import com.zpayment.cmn.persistent.TestPersistent;
  */
 @Component
 public class TestNview {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		ApplicationContext ac = new ClassPathXmlApplicationContext(
 				"com/zpayment/cmn/nview/testNview.xml");
 		TestNview tp = ac.getBean(TestNview.class);
 		tp.test(ac);
 	}
 
-	public void test(ApplicationContext ac) {
+	public void test(ApplicationContext ac) throws InterruptedException {
 		NviewManager nm = ac.getBean(NviewManager.class);
 		PersistentService ps = ac.getBean("PersistentService_JDBC_swtDb",
 				PersistentService.class);
 		nm.init(ps, "test_zpayment_view_def", null);
+		System.out.println(Arrays.toString(nm.getList(DBUser.class).toArray()));
+		Thread.sleep(10000);
+		nm.reloadOne(DBUser.class);
 		System.out.println(Arrays.toString(nm.getList(DBUser.class).toArray()));
 	}
 }

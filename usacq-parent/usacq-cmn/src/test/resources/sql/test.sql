@@ -16,4 +16,4 @@ CREATE TABLE test_zpayment_view_def(
 	PRIMARY KEY (id)  
 )ENGINE=INNODB DEFAULT CHARSET=UTF8;
 
-INSERT INTO test_zpayment_view_def (ID,CACHE_NM,CACHE_INDEX,DATA_TYPE,INDEX_COLUMNS,QUERY_TYPE,TABLE_NM) VALUES(1,'com.zpayment.cmn.persistent.DBUser',1,1,'name',0,'user')
+INSERT INTO test_zpayment_view_def (ID,CACHE_NM,CACHE_INDEX,LOAD_TYPE,DATA_TYPE,INDEX_COLUMNS,QUERY_TYPE,TABLE_NM) VALUES(1,'com.zpayment.cmn.persistent.DBUser',1,1,1,'name',0,'user')

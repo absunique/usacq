@@ -51,7 +51,7 @@ public class TestPersistent {
 		System.out.println(String.format("-----------%s------",
 				"update no condition"));
 		UpdateBuilder ub = UpdateBuilder.build().table("user");
-		ub.stringCol("account", "ssssss");
+		ub.stringCol("account", "ffffff");
 		int count = ps.excute(ub.toPreparedSQL());
 		System.out.println("update count:" + count);
 

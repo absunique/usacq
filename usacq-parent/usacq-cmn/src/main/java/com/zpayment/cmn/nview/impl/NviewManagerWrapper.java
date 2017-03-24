@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zpayment.cmn.Config;
 import com.zpayment.cmn.log.Logger;
 import com.zpayment.cmn.nview.Node;
@@ -55,6 +58,7 @@ public class NviewManagerWrapper implements NviewManager {
 
 	@SuppressWarnings("rawtypes")
 	@Override
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public void init(PersistentService ds, String viewDefTable, String path) {
 		if (Config.isNviewLoadFromDb() && viewDefTable != null) {
 			dbManager.loadFromDs(ds, viewDefTable, managerMap);

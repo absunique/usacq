@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.zpayment.cmn.Const;
+import com.zpayment.cmn.Const.CacheLoadType;
 import com.zpayment.cmn.exp.BaseErrorCode;
 import com.zpayment.cmn.exp.BaseException;
 import com.zpayment.cmn.log.Logger;
@@ -136,13 +137,16 @@ public class NViewManagerDb extends AbstractNViewManagerBean {
 			view.addMapIndex(indexCfg);
 		} else {
 			sqlMap.put(clazz, initSql(def));
-			NView nview = new NviewRefreshWrapper(NView.NVIEW_FLD_STYLE_DB);
+			NviewRefreshWrapper nview = new NviewRefreshWrapper(NView.NVIEW_FLD_STYLE_DB);
 			if (def.getDataType() == Const.CacheTp.DATA_TYPE_MAP) {
 				NviewIndexCfg indexCfg = new NviewIndexCfg();
 				indexCfg.setId(def.getCacheIndex());
 				indexCfg.setColumns(def.getIndexColumns().split(
 						Const.COLUMN_SEPARATOR));
 				nview.addMapIndex(indexCfg);
+			}
+			if(def.getLoadType() != CacheLoadType.NO_REFRESH){
+				nview.setRefreshable(true);
 			}
 			nview.setNviewType(def.getDataType());
 			NViewTreeCfg treeCfg = new NViewTreeCfg();

@@ -207,6 +207,14 @@ public abstract class Const {
 
 	/** 缓存类型 */
 
+	public static abstract class CacheLoadType {
+
+		public static final int NO_REFRESH = 0; // 直接加载，不能刷新
+		public static final int REFRESH = 1; // 可刷新
+	}
+
+	/** 缓存类型 */
+
 	public static abstract class CacheTp {
 
 		public static final int DATA_TYPE_LIST = 0; // 平铺数据
