@@ -20,7 +20,7 @@ import com.zpayment.cmn.timer.config.TimerConfig;
 
 public class JdkTimerFactory extends TimerFactory {
 
-	public Timer prxoyNewTimer(TimerConfig timerConfig, TimerTask task) {
+	public Timer newTimer(TimerConfig timerConfig, TimerTask task) {
 		try {
 			if (timerConfig instanceof FixedDurationTimerConfig) {
 				return new JdkTimer(timerConfig, task);
@@ -32,8 +32,14 @@ public class JdkTimerFactory extends TimerFactory {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.zpayment.cmn.util.NamedService#getSerivceName()
+	 */
 	@Override
-	protected void init() {
-
+	public String getSerivceName() {
+		// TODO Auto-generated method stub
+		return "jdk";
 	}
 }

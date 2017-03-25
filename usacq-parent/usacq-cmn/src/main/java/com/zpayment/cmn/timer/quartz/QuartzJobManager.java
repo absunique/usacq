@@ -35,7 +35,7 @@ import com.zpayment.cmn.util.PropertyUtils;
 public class QuartzJobManager {
 	/** 用于日志记录的Logger */
 	private static final Logger log = Logger.getLogger(QuartzJobManager.class);
-	private static boolean init = false;
+	private static volatile boolean init = false;
 	private static Map<String, SchedulerFactory> sf;
 	private static Properties quartzProperties;
 	private static boolean insulatedByGroup;

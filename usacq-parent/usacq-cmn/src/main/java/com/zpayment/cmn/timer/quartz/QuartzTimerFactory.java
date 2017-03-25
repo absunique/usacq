@@ -21,7 +21,8 @@ import com.zpayment.cmn.timer.config.TimerConfig;
 
 public class QuartzTimerFactory extends TimerFactory {
 
-	public Timer prxoyNewTimer(TimerConfig timerConfig, TimerTask task) {
+	public Timer newTimer(TimerConfig timerConfig, TimerTask task) {
+		QuartzJobManager.init();
 		try {
 			if (timerConfig instanceof FixedDurationTimerConfig) {
 				return new FxiedDurationQaurtzTimer(
@@ -36,8 +37,14 @@ public class QuartzTimerFactory extends TimerFactory {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.zpayment.cmn.util.NamedService#getSerivceName()
+	 */
 	@Override
-	protected void init() {
-		QuartzJobManager.init();
+	public String getSerivceName() {
+		// TODO Auto-generated method stub
+		return "quartz";
 	}
 }
