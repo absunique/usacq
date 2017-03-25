@@ -23,16 +23,16 @@ public abstract class BaseErrorCode {
 	public static final String FAIL = "0";
 
 	public static final String SUCCEED = "1";
+	/** 0001 ~ 0005 未归类异常 */
+	public static final String COMN_UNKOWN_EXCEPTION = "0001"; // CMN - 未知异常
+	public static final String COMN_NULL_EXCEPTION = "0002"; // CMN - 空指针异常,变量名:{0}
+	public static final String COMN_EXCEPTION_TYPE_ERROR = "0003"; // CMN - 异常类型错误
+	public static final String COMN_REFLACT_FAIL = "0004"; // CMN - 反射错误
+	public static final String COMN_NOT_SUPPORTED = "0005"; //CMN - 功能尚不支持
 
 	public static final String COMM_HTTP_GET_FAILED = "0108"; // CMN-从URL {0}  GET数据失败
 	public static final String COMM_HTTP_POST_FAILED = "0109"; // CMN-向URL{0} POST数据失败
 	public static final String COMM_HTTP_STATUS_ERROR = "0110"; // CMN-HTTP返回应答码{0}
-	/** 0001 ~ 0005 未归类异常 */
-	public static final String COMN_UNKOWN_EXCEPTION = "1001"; // CMN - 未知异常
-	public static final String COMN_NULL_EXCEPTION = "1002"; // CMN - 空指针异常
-	public static final String COMN_EXCEPTION_TYPE_ERROR = "1003"; // CMN -  异常类型错误
-	public static final String COMN_REFLACT_FAIL = "1004"; // CMN - 反射错误
-	public static final String COMN_NOT_SUPPORTED = "1005"; //CMN - 功能尚不支持
 	/** 0006 ~ 0010 JNDI异常 */
 	public static final String COMN_JNDI_SERVICE_NOT_EXIST = "1006"; // CMN - JNDI服务不存在
 
@@ -78,16 +78,6 @@ public abstract class BaseErrorCode {
 	public static final String COMN_JMS_MESSAGE_SEND_FAILED = "1050"; // CMN - JMS消息发送异常
 	public static final String COMN_JMS_MESSAGE_QUEUE_JNDI_NOT_EXIST = "1051"; // CMN - JMS消息队列JNDI查找错误
 	public static final String COMN_JMS_MESSAGE_QUEUECONN_JNDI_NOT_EXIST = "1052"; // CMN - JMS消息队列连接工厂JNDI查找错误
-
-	/** 0060 ~ 0069 socket通信异常 */
-	public static final String COMN_LINK_UNKOWN_ERROR = "1060"; // CMN - 通信异常
-	public static final String COMN_LINK_DIS_CONNECT = "1061"; // CMN - 通信链路未连接异常
-	public static final String COMN_LINK_SEND_ERROR = "1062"; // CMN - 发送消息异常
-	public static final String COMN_LINK_TO_BYTES_ERROR = "1063"; // CMN - 转换报文错误
-	public static final String COMN_LINK_PARSE_BYTES_ERROR = "1064"; // CMN - 解析报文错误
-	public static final String COMN_LINK_TIMEOUT = "1065"; // CMN - 响应超时
-	public static final String COMN_SEND_QUEUE_OVERLOAD = "1067"; // CMN - 发送队列超限异常
-	public static final String COMN_LINK_CONFIG_ERROR = "1068"; // CMN - 通信配置错误
 
 	/** 命令执行 相关 */
 	public static final String COMN_CMD_NO_PERMISSION = "1071"; // CMN - 无执行权限

@@ -30,6 +30,7 @@
 		<version.mysql.jdbc>5.1.18</version.mysql.jdbc>
 		<version.httpclient>4.5.1</version.httpclient>
 		<version.quartz>2.2.3</version.quartz>
+		<version.gson>2.8.0</version.gson>
 	</properties>
 	<dependencies>
 		<!-- log -->
@@ -38,7 +39,14 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${version.slf4j}</version>
 		</dependency>
-
+		
+		<!-- json -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${version.gson}</version>
+		</dependency>
+		
 		<!-- http -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
