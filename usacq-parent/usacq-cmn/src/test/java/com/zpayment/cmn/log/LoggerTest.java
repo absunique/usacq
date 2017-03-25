@@ -1,4 +1,4 @@
-package log;
+package com.zpayment.cmn.log;
 
 import java.util.Arrays;
 import java.util.List;
