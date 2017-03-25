@@ -39,6 +39,21 @@ public class SpiUtils {
 		return (List<T>) spiHolderMap.get(clazz).getSpiProviders();
 	}
 
+	// private static <T> boolean checkNamedSpi(Class<T> clazz) {
+	// return NamedService.class.isAssignableFrom(clazz);
+	// }
+
+	public static <T extends NamedService> T getNamedSpi(Class<T> clazz,
+			String name) {
+		List<T> list = getSpiList(clazz);
+		for (T ns : list) {
+			if (ns.getSerivceName().equals(name)) {
+				return ns;
+			}
+		}
+		return null;
+	}
+
 	static class SpiHolder<T> {
 		Class<T> clazz;
 		volatile List<T> spiProviders;

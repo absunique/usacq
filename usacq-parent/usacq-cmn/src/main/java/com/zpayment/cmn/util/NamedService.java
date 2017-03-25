@@ -11,9 +11,10 @@
 package com.zpayment.cmn.util;
 
 /**
+ * 命名服务，用于JDK服务定位
  * @author peiwang
  * @since 2017年3月25日
  */
-public interface TestSpi extends NamedService {
-	public String echoName();
+public interface NamedService {
+	public String getSerivceName();
 }

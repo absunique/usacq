@@ -24,17 +24,37 @@ import org.junit.Test;
 public class SpiUtilsTest {
 
 	@Test
+	public void checkSpi() {
+		assertTrue(NamedService.class.isAssignableFrom(TestSpi.class));
+		assertFalse(NamedService.class.isAssignableFrom(String.class));
+	}
+
+	@Test
 	public void test() throws IOException {
 		List<TestSpi> list = SpiUtils.getSpiList(TestSpi.class);
 		assertEquals(2, list.size());
-		for (TestSpi ts : list) {
-			System.out.println(ts);
-		}
-		list = SpiUtils.getSpiList(TestSpi.class);
-		// assertEquals(2, list.size());
-		for (TestSpi ts : list) {
-			System.out.println(ts);
-		}
+		// for (TestSpi ts : list) {
+		// System.out.println(ts);
+		// }
+		// list = SpiUtils.getSpiList(TestSpi.class);
+		// // assertEquals(2, list.size());
+		// for (TestSpi ts : list) {
+		// System.out.println(ts);
+		// }
 	}
 
+	@Test
+	public void testNamed() {
+		TestSpi single = SpiUtils.getNamedSpi(TestSpi.class, "TestSpiImpl1");
+		assertEquals(TestSpiImpl1.class, single.getClass());
+		
+		single = SpiUtils.getNamedSpi(TestSpi.class, "TestSpiImpl2");
+		assertEquals(TestSpiImpl2.class, single.getClass());
+		
+		single = SpiUtils.getNamedSpi(TestSpi.class, "TestSpiImplX");
+		assertEquals(null,single);
+		
+		single = SpiUtils.getNamedSpi(TestSpi.class, "TestSpiImpl2");
+		assertEquals(TestSpiImpl2.class, single.getClass());
+	}
 }

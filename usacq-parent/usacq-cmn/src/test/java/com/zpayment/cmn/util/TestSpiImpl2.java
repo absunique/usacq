@@ -22,7 +22,14 @@ public class TestSpiImpl2 implements TestSpi{
 	@Override
 	public String echoName() {
 		// TODO Auto-generated method stub
+		return "this is TestSpiImpl2";
+	}
+	/* (non-Javadoc)
+	 * @see com.zpayment.cmn.util.NamedService#getSerivceName()
+	 */
+	@Override
+	public String getSerivceName() {
+		// TODO Auto-generated method stub
 		return "TestSpiImpl2";
 	}
-
 }
