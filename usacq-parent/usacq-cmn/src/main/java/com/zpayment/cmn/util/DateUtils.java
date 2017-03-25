@@ -276,6 +276,23 @@ public abstract class DateUtils {
 	}
 
 	/**
+	 * 修改时间
+	 * 
+	 * @param toModTime
+	 * @param tu
+	 *            时间单元
+	 * @param amount
+	 *            时间值
+	 * @return
+	 */
+	public static Timestamp modTime(Timestamp toModTime, int tu, int amount) {
+		Calendar cl = Calendar.getInstance();
+		cl.setTime(toModTime);
+		cl.add(tu, amount);
+		return new Timestamp(cl.getTimeInMillis());
+	}
+
+	/**
 	 * 转换timestamp到string
 	 * 
 	 * @since

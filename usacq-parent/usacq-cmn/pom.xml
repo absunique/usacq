@@ -29,6 +29,7 @@
 		<version.dbcp>1.4</version.dbcp>
 		<version.mysql.jdbc>5.1.18</version.mysql.jdbc>
 		<version.httpclient>4.5.1</version.httpclient>
+		<version.quartz>2.2.3</version.quartz>
 	</properties>
 	<dependencies>
 		<!-- log -->
@@ -54,6 +55,13 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${version.mysql.jdbc}</version>
+		</dependency>
+		
+		<!-- quartz -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${version.quartz}</version>
 		</dependency>
 		<!-- spring -->
 

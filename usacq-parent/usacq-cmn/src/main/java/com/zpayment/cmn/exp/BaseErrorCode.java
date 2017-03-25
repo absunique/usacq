@@ -32,7 +32,7 @@ public abstract class BaseErrorCode {
 	public static final String COMN_NULL_EXCEPTION = "1002"; // CMN - 空指针异常
 	public static final String COMN_EXCEPTION_TYPE_ERROR = "1003"; // CMN -  异常类型错误
 	public static final String COMN_REFLACT_FAIL = "1004"; // CMN - 反射错误
-
+	public static final String COMN_NOT_SUPPORTED = "1005"; //CMN - 功能尚不支持
 	/** 0006 ~ 0010 JNDI异常 */
 	public static final String COMN_JNDI_SERVICE_NOT_EXIST = "1006"; // CMN - JNDI服务不存在
 
@@ -99,5 +99,6 @@ public abstract class BaseErrorCode {
 	public static final String COMN_OPERATION_LOCKED = "1091"; // CMN - 操作正在进行，不能再次发起
 
 	public static final String COMN_INVALID_PROPERTY = "1092"; // CMN - 错误的配置项
+
 
 }
